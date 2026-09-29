@@ -1,0 +1,6 @@
+[
+  {"deploy_id": "chk-2026.09.28.2", "timestamp": "2026-09-28T09:02:00Z", "author": "priya.raghavan", "commit_sha": "4a1c9de", "summary": "Update checkout copy and error strings for localization", "changed_files": ["services/checkout_service/locales/en.json", "services/checkout_service/locales/de.json"]},
+  {"deploy_id": "chk-2026.09.26.1", "timestamp": "2026-09-26T15:41:00Z", "author": "tom.hendricks", "commit_sha": "9b2f07c", "summary": "Support guest checkout without a saved billing profile", "changed_files": ["services/checkout_service/checkout_api.py", "services/checkout_service/payment_processor.py"]},
+  {"deploy_id": "chk-2026.09.20.1", "timestamp": "2026-09-20T11:25:00Z", "author": "priya.raghavan", "commit_sha": "e77d331", "summary": "Add in-process cart cache to cut read load on carts table", "changed_files": ["services/checkout_service/cart_cache.py", "services/checkout_service/checkout_api.py"]},
+  {"deploy_id": "chk-2026.09.14.3", "timestamp": "2026-09-14T08:10:00Z", "author": "sam.oyelaran", "commit_sha": "1cc80a4", "summary": "Bump requests to 2.32.3 and pin transitive deps", "changed_files": ["requirements.txt"]}
+]

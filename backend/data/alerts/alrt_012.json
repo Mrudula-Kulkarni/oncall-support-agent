@@ -1,0 +1,14 @@
+{
+  "alert_id": "alrt_012",
+  "service_id": "notification-service",
+  "type": "latency_spike",
+  "message": "Occasional slow writes to notification_status table during nightly digest send",
+  "timestamp": "2026-09-26T07:55:00Z",
+  "source": "datadog-monitor",
+  "environment": "production",
+  "metric": {
+    "p99_latency_ms": 610,
+    "baseline_p99_latency_ms": 95,
+    "db_statement_timeout_count_5m": 47
+  }
+}

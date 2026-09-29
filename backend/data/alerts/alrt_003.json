@@ -1,0 +1,15 @@
+{
+  "alert_id": "alrt_003",
+  "service_id": "checkout-service",
+  "type": "latency_spike",
+  "message": "p99 latency on checkout session creation degraded; container memory at 94% of limit and climbing",
+  "timestamp": "2026-09-28T11:40:00Z",
+  "source": "datadog-monitor",
+  "environment": "production",
+  "metric": {
+    "p99_latency_ms": 4180,
+    "baseline_p99_latency_ms": 340,
+    "memory_used_pct": 94.2,
+    "gc_pause_ms_p99": 820
+  }
+}

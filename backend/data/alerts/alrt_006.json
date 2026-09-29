@@ -1,0 +1,15 @@
+{
+  "alert_id": "alrt_006",
+  "service_id": "payment-service",
+  "type": "service_down",
+  "message": "refund-worker deployment in CrashLoopBackOff — unhandled requests.HTTPError from ledger-service",
+  "timestamp": "2026-09-28T03:12:00Z",
+  "source": "kubernetes-event-exporter",
+  "environment": "production",
+  "metric": {
+    "healthy_pods": 0,
+    "expected_pods": 4,
+    "restart_count_15m": 27,
+    "refund_queue_depth": 1394
+  }
+}

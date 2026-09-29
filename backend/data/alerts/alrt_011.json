@@ -1,0 +1,14 @@
+{
+  "alert_id": "alrt_011",
+  "service_id": "notification-service",
+  "type": "latency_spike",
+  "message": "Notification status writes timing out — 'canceling statement due to statement timeout' from notifications DB",
+  "timestamp": "2026-09-28T10:10:00Z",
+  "source": "prometheus-alertmanager",
+  "environment": "production",
+  "metric": {
+    "p99_latency_ms": 2140,
+    "baseline_p99_latency_ms": 95,
+    "db_statement_timeout_count_5m": 894
+  }
+}

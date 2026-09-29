@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "total_scenarios": 12,
+    "distinct_bugs": 8,
+    "services": 5,
+    "authored_on": "2026-09-28",
+    "scoring_note": "A scenario counts as correctly localized when the Investigator names expected_file AND a function listed in acceptable_functions. expected_function is the primary answer; acceptable_functions exists because some bugs can legitimately be reported at either the raising line or its caller, and grading should not punish a defensible alternative.",
+    "honesty_note": "These labels are authored, not derived from real incidents. Report localization accuracy as a fraction of these 12 scenarios and say so plainly. Do not derive MTTR or any comparative percentage from this set — there is no baseline to compare against."
+  },
+  "scenarios": [
+    {
+      "alert_id": "alrt_001",
+      "service_id": "checkout-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/checkout_service/payment_processor.py",
+      "expected_function": "build_billing_payload",
+      "acceptable_functions": ["build_billing_payload", "process_payment"],
+      "bug_type": "missing_null_check",
+      "introducing_deploy_id": "chk-2026.09.26.1",
+      "notes": "customer.billing_address is None for guest checkouts; dereferenced unconditionally."
+    },
+    {
+      "alert_id": "alrt_002",
+      "service_id": "checkout-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/checkout_service/payment_processor.py",
+      "expected_function": "build_billing_payload",
+      "acceptable_functions": ["build_billing_payload", "process_payment"],
+      "bug_type": "missing_null_check",
+      "introducing_deploy_id": "chk-2026.09.26.1",
+      "notes": "Same bug as alrt_001 at lower volume; Triage should rate severity lower."
+    },
+    {
+      "alert_id": "alrt_003",
+      "service_id": "checkout-service",
+      "expected_category": "latency_spike",
+      "expected_file": "sample_repo/services/checkout_service/cart_cache.py",
+      "expected_function": "get_cart",
+      "acceptable_functions": ["get_cart", "put_cart", "CartCache"],
+      "bug_type": "unbounded_cache_no_eviction",
+      "introducing_deploy_id": "chk-2026.09.20.1",
+      "notes": "CACHE_TTL_SECONDS is declared but never enforced; _entries grows without bound."
+    },
+    {
+      "alert_id": "alrt_004",
+      "service_id": "payment-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/payment_service/gateway_client.py",
+      "expected_function": "charge_card",
+      "acceptable_functions": ["charge_card"],
+      "bug_type": "missing_retry",
+      "introducing_deploy_id": "pay-2026.09.28.1",
+      "notes": "with_retries is imported and used on sibling functions but absent on charge_card."
+    },
+    {
+      "alert_id": "alrt_005",
+      "service_id": "payment-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/payment_service/gateway_client.py",
+      "expected_function": "charge_card",
+      "acceptable_functions": ["charge_card"],
+      "bug_type": "missing_retry",
+      "introducing_deploy_id": "pay-2026.09.28.1",
+      "notes": "Same bug as alrt_004 at critical severity with revenue impact attached."
+    },
+    {
+      "alert_id": "alrt_006",
+      "service_id": "payment-service",
+      "expected_category": "service_down",
+      "expected_file": "sample_repo/services/payment_service/refund_handler.py",
+      "expected_function": "process_refund",
+      "acceptable_functions": ["process_refund", "run_worker"],
+      "bug_type": "unhandled_exception_in_worker_loop",
+      "introducing_deploy_id": "pay-2026.09.25.2",
+      "notes": "post_json raise_for_status propagates out of run_worker; poison message crash loop."
+    },
+    {
+      "alert_id": "alrt_007",
+      "service_id": "auth-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/auth_service/token_manager.py",
+      "expected_function": "validate_token",
+      "acceptable_functions": ["validate_token"],
+      "bug_type": "race_condition_unsynchronized_cache",
+      "introducing_deploy_id": "auth-2026.09.27.1",
+      "notes": "Check-then-delete on module-level _token_cache with no lock across threaded workers."
+    },
+    {
+      "alert_id": "alrt_008",
+      "service_id": "auth-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/auth_service/token_manager.py",
+      "expected_function": "validate_token",
+      "acceptable_functions": ["validate_token"],
+      "bug_type": "race_condition_unsynchronized_cache",
+      "introducing_deploy_id": "auth-2026.09.27.1",
+      "notes": "Same bug as alrt_007 at lower volume; non-reproducible-on-retry is the tell."
+    },
+    {
+      "alert_id": "alrt_009",
+      "service_id": "inventory-service",
+      "expected_category": "error_rate_spike",
+      "expected_file": "sample_repo/services/inventory_service/stock_sync.py",
+      "expected_function": "sync_stock_batch",
+      "acceptable_functions": ["sync_stock_batch"],
+      "bug_type": "off_by_one",
+      "introducing_deploy_id": "inv-2026.09.26.1",
+      "notes": "range(len(items) - 1) skips the final item of every batch; logs show received=500 written=499."
+    },
+    {
+      "alert_id": "alrt_010",
+      "service_id": "inventory-service",
+      "expected_category": "failed_deploy",
+      "expected_file": "sample_repo/services/inventory_service/reservation_api.py",
+      "expected_function": "reserve_items",
+      "acceptable_functions": ["reserve_items"],
+      "bug_type": "breaking_contract_change",
+      "introducing_deploy_id": "inv-2026.09.28.1",
+      "notes": "stock-ledger v3 returns 'id'; code still reads 'reservation_id'. Easiest scenario — deploy is 6 minutes old."
+    },
+    {
+      "alert_id": "alrt_011",
+      "service_id": "notification-service",
+      "expected_category": "latency_spike",
+      "expected_file": "sample_repo/services/notification_service/status_store.py",
+      "expected_function": "record_notification_status",
+      "acceptable_functions": ["record_notification_status", "_db"],
+      "bug_type": "bad_db_timeout_config",
+      "introducing_deploy_id": "ntf-2026.09.25.1",
+      "notes": "statement_timeout_ms=50 sits below normal p99 (~68ms). The DB is healthy; the ceiling is wrong."
+    },
+    {
+      "alert_id": "alrt_012",
+      "service_id": "notification-service",
+      "expected_category": "latency_spike",
+      "expected_file": "sample_repo/services/notification_service/status_store.py",
+      "expected_function": "record_notification_status",
+      "acceptable_functions": ["record_notification_status", "_db"],
+      "bug_type": "bad_db_timeout_config",
+      "introducing_deploy_id": "ntf-2026.09.25.1",
+      "notes": "Same bug as alrt_011, pre-dating the volume increase; lower severity."
+    }
+  ]
+}

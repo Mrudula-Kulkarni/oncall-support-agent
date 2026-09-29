@@ -1,0 +1,5 @@
+[
+  {"deploy_id": "auth-2026.09.27.1", "timestamp": "2026-09-27T14:20:00Z", "author": "dana.kim", "commit_sha": "3de7741", "summary": "Cache session claims in-process to cut Redis round trips per request", "changed_files": ["services/auth_service/token_manager.py"]},
+  {"deploy_id": "auth-2026.09.22.1", "timestamp": "2026-09-22T09:35:00Z", "author": "priya.raghavan", "commit_sha": "ab99012", "summary": "Add rate limiting to password reset endpoint", "changed_files": ["services/auth_service/session_api.py", "services/auth_service/rate_limit.py"]},
+  {"deploy_id": "auth-2026.09.15.2", "timestamp": "2026-09-15T17:48:00Z", "author": "dana.kim", "commit_sha": "62c0f88", "summary": "Rotate JWT signing keys and support dual verification", "changed_files": ["services/auth_service/keys.py"]}
+]

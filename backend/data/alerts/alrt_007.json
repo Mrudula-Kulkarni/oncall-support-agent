@@ -1,0 +1,14 @@
+{
+  "alert_id": "alrt_007",
+  "service_id": "auth-service",
+  "type": "error_rate_spike",
+  "message": "Intermittent 401s across all API workers — KeyError raised inside token validation path",
+  "timestamp": "2026-09-27T22:31:00Z",
+  "source": "prometheus-alertmanager",
+  "environment": "production",
+  "metric": {
+    "error_rate": 0.22,
+    "baseline_error_rate": 0.004,
+    "unauthorized_responses_5m": 3106
+  }
+}

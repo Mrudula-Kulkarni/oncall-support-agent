@@ -1,0 +1,25 @@
+# Secrets
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Vector store (regenerated from backend/data/incidents)
+chroma_db/
+.chroma/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.vercel/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

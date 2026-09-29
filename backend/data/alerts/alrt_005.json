@@ -1,0 +1,15 @@
+{
+  "alert_id": "alrt_005",
+  "service_id": "payment-service",
+  "type": "error_rate_spike",
+  "message": "Card authorization error rate critical — transient gateway 504s surfacing directly to customers",
+  "timestamp": "2026-09-28T16:47:00Z",
+  "source": "prometheus-alertmanager",
+  "environment": "production",
+  "metric": {
+    "error_rate": 0.47,
+    "baseline_error_rate": 0.011,
+    "gateway_timeout_count_5m": 602,
+    "revenue_impact_usd_estimate": 48200
+  }
+}

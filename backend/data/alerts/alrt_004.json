@@ -1,0 +1,14 @@
+{
+  "alert_id": "alrt_004",
+  "service_id": "payment-service",
+  "type": "error_rate_spike",
+  "message": "Authorization failures elevated — requests.Timeout reaching card gateway, no retry observed",
+  "timestamp": "2026-09-28T13:05:00Z",
+  "source": "prometheus-alertmanager",
+  "environment": "production",
+  "metric": {
+    "error_rate": 0.19,
+    "baseline_error_rate": 0.011,
+    "gateway_timeout_count_5m": 143
+  }
+}

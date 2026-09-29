@@ -1,0 +1,5 @@
+[
+  {"deploy_id": "ntf-2026.09.25.1", "timestamp": "2026-09-25T11:15:00Z", "author": "dana.kim", "commit_sha": "60bb41f", "summary": "Tighten notification DB timeouts so status writes fail fast", "changed_files": ["services/notification_service/status_store.py"]},
+  {"deploy_id": "ntf-2026.09.21.1", "timestamp": "2026-09-21T15:50:00Z", "author": "tom.hendricks", "commit_sha": "19fa02d", "summary": "Add SMS channel support alongside email", "changed_files": ["services/notification_service/sms_client.py", "services/notification_service/dispatcher.py"]},
+  {"deploy_id": "ntf-2026.09.12.1", "timestamp": "2026-09-12T09:05:00Z", "author": "priya.raghavan", "commit_sha": "cb7730e", "summary": "Retry ESP sends on transient 5xx responses", "changed_files": ["services/notification_service/email_client.py"]}
+]

@@ -1,0 +1,6 @@
+[
+  {"deploy_id": "pay-2026.09.28.1", "timestamp": "2026-09-28T08:55:00Z", "author": "sam.oyelaran", "commit_sha": "c03be19", "summary": "Simplify gateway client error handling ahead of v3 migration", "changed_files": ["services/payment_service/gateway_client.py"]},
+  {"deploy_id": "pay-2026.09.25.2", "timestamp": "2026-09-25T16:30:00Z", "author": "tom.hendricks", "commit_sha": "77aa5b2", "summary": "Refund worker writes ledger entries synchronously instead of queueing", "changed_files": ["services/payment_service/refund_handler.py"]},
+  {"deploy_id": "pay-2026.09.19.1", "timestamp": "2026-09-19T13:12:00Z", "author": "dana.kim", "commit_sha": "5f1908a", "summary": "Add structured logging fields to payment audit trail", "changed_files": ["services/payment_service/audit_log.py"]},
+  {"deploy_id": "pay-2026.09.11.1", "timestamp": "2026-09-11T10:04:00Z", "author": "sam.oyelaran", "commit_sha": "b210cc7", "summary": "Increase gateway connection pool size from 20 to 50", "changed_files": ["services/payment_service/config.py"]}
+]

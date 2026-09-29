@@ -1,0 +1,11 @@
+[
+  {"timestamp": "2026-09-28T10:08:14Z", "level": "INFO", "service": "notification-service", "logger": "services.notification_service.email_client", "message": "notification.email.sent template=order_shipped provider_ref=msg_71ba2"},
+  {"timestamp": "2026-09-28T10:09:02Z", "level": "ERROR", "service": "notification-service", "logger": "services.notification_service.status_store", "message": "failed to record delivery status notification_id=ntf_5521", "trace": "Traceback (most recent call last):\n  File \"services/notification_service/status_store.py\", line 21, in record_notification_status\n    _db.execute(\n  File \"common/db_client.py\", line 39, in execute\n    cur.execute(query, params or ())\npsycopg2.errors.QueryCanceled: canceling statement due to statement timeout"},
+  {"timestamp": "2026-09-28T10:09:05Z", "level": "ERROR", "service": "notification-service", "logger": "common.db_client", "message": "db.operational_error query_ms=51"},
+  {"timestamp": "2026-09-28T10:09:31Z", "level": "ERROR", "service": "notification-service", "logger": "common.db_client", "message": "db.operational_error query_ms=52"},
+  {"timestamp": "2026-09-28T10:09:44Z", "level": "INFO", "service": "notification-service", "logger": "notif-db.metrics", "message": "notifications DB p99 query time 68ms, connection pool 6/20 in use, no lock contention"},
+  {"timestamp": "2026-09-28T10:10:00Z", "level": "WARNING", "service": "notification-service", "logger": "services.notification_service.status_store", "message": "894 statement timeouts in 5m; every failing query ran between 50ms and 53ms"},
+  {"timestamp": "2026-09-28T10:10:22Z", "level": "INFO", "service": "notification-service", "logger": "services.notification_service.status_store", "message": "notification.status.recorded id=ntf_5530 channel=email status=delivered"},
+  {"timestamp": "2026-09-26T07:54:40Z", "level": "ERROR", "service": "notification-service", "logger": "services.notification_service.status_store", "message": "failed to record delivery status notification_id=ntf_4180", "trace": "psycopg2.errors.QueryCanceled: canceling statement due to statement timeout"},
+  {"timestamp": "2026-09-26T07:55:00Z", "level": "WARNING", "service": "notification-service", "logger": "services.notification_service.status_store", "message": "47 statement timeouts during nightly digest send"}
+]
