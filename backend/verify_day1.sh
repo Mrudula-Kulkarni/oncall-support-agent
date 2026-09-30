@@ -60,7 +60,8 @@ if curl -s --retry 20 --retry-delay 1 --retry-connrefused -o /dev/null "localhos
   if curl -s -D - -o /dev/null -H "Origin: http://evil.example" "localhost:$PORT/health" \
        | grep -qi access-control-allow-origin
   then fail "unknown origin rejected (header was sent!)"; else pass "unknown origin rejected"; fi
-  check "only /health exposed"  "['/health']" bash -c "curl -s localhost:$PORT/openapi.json | $PY -c \"import json,sys; print(list(json.load(sys.stdin)['paths']))\""
+  # Pinned to the current phase's surface, so an accidentally-exposed route is noticed.
+  check "route surface"  "['/health', '/scenarios', '/run']" bash -c "curl -s localhost:$PORT/openapi.json | $PY -c \"import json,sys; print(sorted(json.load(sys.stdin)['paths'], key=['/health','/scenarios','/run'].index))\""
 else
   fail "server never came up — see /tmp/verify_day1_uvicorn.log"
 fi

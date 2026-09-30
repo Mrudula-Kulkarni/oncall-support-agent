@@ -4,9 +4,11 @@ uvicorn[standard]==0.34.0
 pydantic==2.10.4
 python-dotenv==1.0.1
 
+# Phase 2 (Triage + Reporter) — installed and verified.
+langchain-groq==1.1.3
+
 # Added in their own phases, so versions are pinned against a working install
 # rather than guessed ahead of time:
-#   Day 1-2  agents        langchain-groq
 #   Day 3-4  RAG           chromadb
 #   Day 4    orchestration langgraph
 #   Day 5    tooling       mcp

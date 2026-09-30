@@ -31,7 +31,11 @@ infrastructure is involved, which is what makes the demo reliable and free to ru
 | Path | What it is |
 |---|---|
 | `backend/app/models.py` | Structured I/O contract for every agent |
-| `backend/app/main.py` | FastAPI entrypoint (`/health`, CORS) |
+| `backend/app/main.py` | FastAPI entrypoint (`/health`, `/scenarios`, `/run`, CORS) |
+| `backend/app/agents/` | One module per agent (Triage, Reporter so far) |
+| `backend/app/pipeline.py` | Runs the stages that exist and times the run |
+| `backend/app/llm.py` | Groq client — model and sampling in one place |
+| `backend/app/data_access.py` | All fixture reads (moves behind MCP on Day 5) |
 | `backend/data/alerts/` | 12 alert scenarios |
 | `backend/data/logs/` | Per-service log snippets, including the bug-revealing traces |
 | `backend/data/deploys/` | Per-service deploy history |
@@ -86,5 +90,22 @@ compare against, so no such number is reported.
 
 ## Status
 
-Phase 1 complete: scaffold, models, and all synthetic data, with ground truth cross-checked
-against the source files it points to. See `DAY1_PLAN.md`. Agents come next.
+**Phase 1** — scaffold, models, and all synthetic data, ground truth cross-checked against the
+source files it points to. See `DAY1_PLAN.md`.
+
+**Phase 2** — Triage and Reporter agents, and a working `alert → triage → reporter` path behind
+`POST /run`. See `DAY2_PLAN.md`. Triage matches the authored category on all 12 scenarios, but
+its prompt was tuned against those same 12 with nothing held out, so that is a fit to the set
+rather than a measure of generalisation — `DAY2_PLAN.md` records what each revision fixed.
+
+Next: the Investigator (spec §9.3), which is where root-cause localisation — and the one metric
+this project can honestly report — actually gets measured.
+
+Running the two phases that exist:
+
+```bash
+cd backend
+./verify_day1.sh                 # every mechanical check, exits non-zero on failure
+./.venv/bin/python eval_triage.py   # triage category accuracy over the 12 scenarios
+./.venv/bin/python baseline.py      # the no-LLM localisation floor the Investigator must beat
+```
