@@ -226,7 +226,11 @@ Spec §9.3, and the hardest phase. Two things from earlier work feed straight in
   accuracy as a delta against that floor, not on its own.
 - `alrt_003` and `alrt_009` are the only two scenarios the baseline misses, because their logs
   carry no traceback naming the answer. They are the whole difference between this eval and a
-  regex. `alrt_003` was hand-verified solvable once the log ordering was fixed: cache size
-  climbing, heap at 94%, and an entry still held from seven days earlier, all inside two
-  minutes of the alert. `alrt_009` is still unverified — do that before iterating on the
-  Investigator's prompt, or a miss is ambiguous between a weak agent and a broken chain.
+  regex. **Both are now hand-verified solvable**, which is the precondition spec §9.3 needs
+  before prompt iteration begins — a miss is now attributable to the agent rather than
+  ambiguous between a weak agent and a broken fixture.
+  - `alrt_003`: solvable once log ordering was fixed — cache size climbing, heap at 94%, and
+    an entry still held from seven days earlier, all inside two minutes of the alert. Note it
+    cannot be re-tested blind by whoever debugged it; the chain was walked rather than guessed.
+  - `alrt_009`: solved first try from `received=500 written=499` plus the oversell warnings,
+    choosing `stock_sync.py` over `reservation_api.py` with no traceback naming either.
