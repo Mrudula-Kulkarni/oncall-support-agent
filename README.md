@@ -74,6 +74,13 @@ plus countable facts (4 agents, 18 past incidents, 5 runbooks) and measured end-
 It does not support comparative claims like "reduced MTTR by X%". There is no baseline here to
 compare against, so no such number is reported.
 
+There *is* a baseline for localization, and it is not zero. `backend/baseline.py` measures what
+a no-LLM heuristic scores by taking the traceback nearest in time to the alert: **10/12**. Most
+production alerts carry a stack trace naming the failing file, so the honest way to report the
+Investigator is as a delta on that 83% floor. The two scenarios the heuristic misses are the
+only ones whose logs never name the answer, and they are where the agent has to actually
+reason.
+
 ## Design decisions worth knowing
 
 - **Four narrow agents rather than one large prompt.** Single-purpose agents are easier to
@@ -107,5 +114,5 @@ Running the two phases that exist:
 cd backend
 ./verify_day1.sh                 # every mechanical check, exits non-zero on failure
 ./.venv/bin/python eval_triage.py   # triage category accuracy over the 12 scenarios
-./.venv/bin/python baseline.py      # the no-LLM localisation floor the Investigator must beat
+./.venv/bin/python baseline.py      # the 83% no-LLM floor the Investigator must beat
 ```

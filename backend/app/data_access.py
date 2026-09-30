@@ -39,9 +39,17 @@ def list_alerts() -> list[Alert]:
 
 @functools.lru_cache(maxsize=None)
 def load_logs(service_id: str) -> list[dict]:
-    """Log entries for one service. Fixtures are static, so caching is safe."""
+    """Log entries for one service, oldest first. Fixtures are static, so caching is safe.
+
+    Sorted here as well as on disk. Three of the five fixtures were authored out of order,
+    which put a later, unrelated incident's stack traces ahead of the evidence for the alert
+    being investigated — enough to send a reader (and an agent) to the wrong file. A
+    hand-edited fixture can reintroduce that, so the order is enforced at the read.
+    """
     path = DATA / "logs" / f"{service_id}.json"
-    return json.loads(path.read_text()) if path.exists() else []
+    if not path.exists():
+        return []
+    return sorted(json.loads(path.read_text()), key=lambda e: e["timestamp"])
 
 
 @functools.lru_cache(maxsize=None)

@@ -1,13 +1,81 @@
 [
-  {"timestamp": "2026-09-28T13:04:51Z", "level": "INFO", "service": "payment-service", "logger": "services.payment_service.gateway_client", "message": "gateway.charge.start customer_id=cus_5512 amount=8400"},
-  {"timestamp": "2026-09-28T13:04:57Z", "level": "ERROR", "service": "payment-service", "logger": "services.payment_service.gateway_client", "message": "charge failed after 6.0s", "trace": "Traceback (most recent call last):\n  File \"services/payment_service/gateway_client.py\", line 27, in charge_card\n    response = post_json(\n  File \"common/http_client.py\", line 42, in post_json\n    response = requests.post(url, json=payload, timeout=timeout, headers=headers or {})\nrequests.exceptions.Timeout: HTTPSConnectionPool(host='api.cardgateway.example', port=443): Read timed out. (read timeout=6.0)"},
-  {"timestamp": "2026-09-28T13:05:02Z", "level": "ERROR", "service": "payment-service", "logger": "services.payment_service.gateway_client", "message": "charge failed customer_id=cus_5518 status=504 upstream=cardgateway"},
-  {"timestamp": "2026-09-28T13:05:04Z", "level": "INFO", "service": "payment-service", "logger": "common.http_client", "message": "http.retry fn=capture_authorization attempt=1/3 sleep=0.25s"},
-  {"timestamp": "2026-09-28T13:05:05Z", "level": "INFO", "service": "payment-service", "logger": "common.http_client", "message": "http.retry fn=capture_authorization attempt=2/3 sleep=0.50s"},
-  {"timestamp": "2026-09-28T13:05:06Z", "level": "INFO", "service": "payment-service", "logger": "services.payment_service.gateway_client", "message": "capture succeeded after retry auth_id=auth_88213"},
-  {"timestamp": "2026-09-28T13:05:19Z", "level": "WARNING", "service": "payment-service", "logger": "services.payment_service.gateway_client", "message": "143 gateway timeouts in 5m window; 0 retry attempts logged for charge_card"},
-  {"timestamp": "2026-09-28T03:11:52Z", "level": "INFO", "service": "payment-service", "logger": "services.payment_service.refund_handler", "message": "refund.completed refund_id=rfnd_2201 amount=4500"},
-  {"timestamp": "2026-09-28T03:12:03Z", "level": "CRITICAL", "service": "payment-service", "logger": "services.payment_service.refund_handler", "message": "refund worker died", "trace": "Traceback (most recent call last):\n  File \"services/payment_service/refund_handler.py\", line 49, in run_worker\n    process_refund(refund_request, db_client)\n  File \"services/payment_service/refund_handler.py\", line 19, in process_refund\n    ledger_entry = post_json(\n  File \"common/http_client.py\", line 43, in post_json\n    response.raise_for_status()\nrequests.exceptions.HTTPError: 503 Server Error: Service Unavailable for url: http://ledger-service.internal/v1/entries"},
-  {"timestamp": "2026-09-28T03:12:04Z", "level": "ERROR", "service": "payment-service", "logger": "kubernetes", "message": "container refund-worker exited with code 1, restarting (restart_count=27)"},
-  {"timestamp": "2026-09-28T03:12:40Z", "level": "WARNING", "service": "payment-service", "logger": "services.payment_service.refund_handler", "message": "refund queue depth 1394 and rising, no consumer healthy"}
+  {
+    "timestamp": "2026-09-28T03:11:52Z",
+    "level": "INFO",
+    "service": "payment-service",
+    "logger": "services.payment_service.refund_handler",
+    "message": "refund.completed refund_id=rfnd_2201 amount=4500"
+  },
+  {
+    "timestamp": "2026-09-28T03:12:03Z",
+    "level": "CRITICAL",
+    "service": "payment-service",
+    "logger": "services.payment_service.refund_handler",
+    "message": "refund worker died",
+    "trace": "Traceback (most recent call last):\n  File \"services/payment_service/refund_handler.py\", line 49, in run_worker\n    process_refund(refund_request, db_client)\n  File \"services/payment_service/refund_handler.py\", line 19, in process_refund\n    ledger_entry = post_json(\n  File \"common/http_client.py\", line 43, in post_json\n    response.raise_for_status()\nrequests.exceptions.HTTPError: 503 Server Error: Service Unavailable for url: http://ledger-service.internal/v1/entries"
+  },
+  {
+    "timestamp": "2026-09-28T03:12:04Z",
+    "level": "ERROR",
+    "service": "payment-service",
+    "logger": "kubernetes",
+    "message": "container refund-worker exited with code 1, restarting (restart_count=27)"
+  },
+  {
+    "timestamp": "2026-09-28T03:12:40Z",
+    "level": "WARNING",
+    "service": "payment-service",
+    "logger": "services.payment_service.refund_handler",
+    "message": "refund queue depth 1394 and rising, no consumer healthy"
+  },
+  {
+    "timestamp": "2026-09-28T13:04:51Z",
+    "level": "INFO",
+    "service": "payment-service",
+    "logger": "services.payment_service.gateway_client",
+    "message": "gateway.charge.start customer_id=cus_5512 amount=8400"
+  },
+  {
+    "timestamp": "2026-09-28T13:04:57Z",
+    "level": "ERROR",
+    "service": "payment-service",
+    "logger": "services.payment_service.gateway_client",
+    "message": "charge failed after 6.0s",
+    "trace": "Traceback (most recent call last):\n  File \"services/payment_service/gateway_client.py\", line 27, in charge_card\n    response = post_json(\n  File \"common/http_client.py\", line 42, in post_json\n    response = requests.post(url, json=payload, timeout=timeout, headers=headers or {})\nrequests.exceptions.Timeout: HTTPSConnectionPool(host='api.cardgateway.example', port=443): Read timed out. (read timeout=6.0)"
+  },
+  {
+    "timestamp": "2026-09-28T13:05:02Z",
+    "level": "ERROR",
+    "service": "payment-service",
+    "logger": "services.payment_service.gateway_client",
+    "message": "charge failed customer_id=cus_5518 status=504 upstream=cardgateway"
+  },
+  {
+    "timestamp": "2026-09-28T13:05:04Z",
+    "level": "INFO",
+    "service": "payment-service",
+    "logger": "common.http_client",
+    "message": "http.retry fn=capture_authorization attempt=1/3 sleep=0.25s"
+  },
+  {
+    "timestamp": "2026-09-28T13:05:05Z",
+    "level": "INFO",
+    "service": "payment-service",
+    "logger": "common.http_client",
+    "message": "http.retry fn=capture_authorization attempt=2/3 sleep=0.50s"
+  },
+  {
+    "timestamp": "2026-09-28T13:05:06Z",
+    "level": "INFO",
+    "service": "payment-service",
+    "logger": "services.payment_service.gateway_client",
+    "message": "capture succeeded after retry auth_id=auth_88213"
+  },
+  {
+    "timestamp": "2026-09-28T13:05:19Z",
+    "level": "WARNING",
+    "service": "payment-service",
+    "logger": "services.payment_service.gateway_client",
+    "message": "143 gateway timeouts in 5m window; 0 retry attempts logged for charge_card"
+  }
 ]

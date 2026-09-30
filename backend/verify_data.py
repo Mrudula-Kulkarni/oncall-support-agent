@@ -76,6 +76,22 @@ def main():
         if s["expected_category"] not in runbooks:
             problems.append(f"{aid}: no runbook for category {s['expected_category']}")
 
+    # Log fixtures must read oldest-first. Authored out of order, a later unrelated
+    # incident's stack traces land ahead of the evidence for the alert under investigation,
+    # which points a reader at the wrong file. See DAY2_PLAN.md.
+    for path in sorted((DATA / "logs").glob("*.json")):
+        stamps = [e["timestamp"] for e in json.loads(path.read_text())]
+        if stamps != sorted(stamps):
+            problems.append(f"{path.stem}: log entries are not in chronological order")
+
+    # An alert must not fire before the logs it is about, or timing is unusable as a signal.
+    for s in scenarios:
+        alert = json.loads((DATA / "alerts" / f"{s['alert_id']}.json").read_text())
+        entries = json.loads((DATA / "logs" / f"{s['service_id']}.json").read_text())
+        if entries and alert["timestamp"] < min(e["timestamp"] for e in entries):
+            problems.append(f"{s['alert_id']}: alert fires before every log entry for "
+                            f"{s['service_id']}")
+
     unlabeled = alerts - {s["alert_id"] for s in scenarios}
     if unlabeled:
         problems.append(f"alerts with no ground-truth label: {sorted(unlabeled)}")

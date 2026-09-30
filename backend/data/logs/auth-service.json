@@ -1,11 +1,68 @@
 [
-  {"timestamp": "2026-09-27T22:30:41Z", "level": "DEBUG", "service": "auth-service", "logger": "services.auth_service.token_manager", "message": "auth.cache.sweep dropped=1184 remaining=20551"},
-  {"timestamp": "2026-09-27T22:30:58Z", "level": "ERROR", "service": "auth-service", "logger": "services.auth_service.token_manager", "message": "token validation raised on worker-7", "trace": "Traceback (most recent call last):\n  File \"services/auth_service/token_manager.py\", line 22, in validate_token\n    del _token_cache[token]\nKeyError: 'sess_a91f33c07b'"},
-  {"timestamp": "2026-09-27T22:31:02Z", "level": "ERROR", "service": "auth-service", "logger": "services.auth_service.token_manager", "message": "token validation raised on worker-3", "trace": "Traceback (most recent call last):\n  File \"services/auth_service/token_manager.py\", line 22, in validate_token\n    del _token_cache[token]\nKeyError: 'sess_4d20be81aa'"},
-  {"timestamp": "2026-09-27T22:31:04Z", "level": "WARNING", "service": "auth-service", "logger": "services.auth_service.session_api", "message": "returning 401 for request that presented a valid unexpired session token"},
-  {"timestamp": "2026-09-27T22:31:07Z", "level": "INFO", "service": "auth-service", "logger": "services.auth_service.session_api", "message": "client retried same token and succeeded token_prefix=sess_4d2"},
-  {"timestamp": "2026-09-27T22:31:19Z", "level": "WARNING", "service": "auth-service", "logger": "services.auth_service.session_api", "message": "3106 unauthorized responses in 5m; failures not reproducible on retry"},
-  {"timestamp": "2026-09-27T22:31:33Z", "level": "INFO", "service": "auth-service", "logger": "runtime", "message": "gunicorn running 8 sync workers with 4 threads each"},
-  {"timestamp": "2026-09-28T08:04:58Z", "level": "ERROR", "service": "auth-service", "logger": "services.auth_service.token_manager", "message": "token validation raised on worker-2", "trace": "Traceback (most recent call last):\n  File \"services/auth_service/token_manager.py\", line 22, in validate_token\n    del _token_cache[token]\nKeyError: 'sess_77bc10de42'"},
-  {"timestamp": "2026-09-28T08:05:12Z", "level": "INFO", "service": "auth-service", "logger": "services.auth_service.token_manager", "message": "auth.token.revoked token_prefix=sess_991"}
+  {
+    "timestamp": "2026-09-27T22:30:41Z",
+    "level": "DEBUG",
+    "service": "auth-service",
+    "logger": "services.auth_service.token_manager",
+    "message": "auth.cache.sweep dropped=1184 remaining=20551"
+  },
+  {
+    "timestamp": "2026-09-27T22:30:58Z",
+    "level": "ERROR",
+    "service": "auth-service",
+    "logger": "services.auth_service.token_manager",
+    "message": "token validation raised on worker-7",
+    "trace": "Traceback (most recent call last):\n  File \"services/auth_service/token_manager.py\", line 22, in validate_token\n    del _token_cache[token]\nKeyError: 'sess_a91f33c07b'"
+  },
+  {
+    "timestamp": "2026-09-27T22:31:02Z",
+    "level": "ERROR",
+    "service": "auth-service",
+    "logger": "services.auth_service.token_manager",
+    "message": "token validation raised on worker-3",
+    "trace": "Traceback (most recent call last):\n  File \"services/auth_service/token_manager.py\", line 22, in validate_token\n    del _token_cache[token]\nKeyError: 'sess_4d20be81aa'"
+  },
+  {
+    "timestamp": "2026-09-27T22:31:04Z",
+    "level": "WARNING",
+    "service": "auth-service",
+    "logger": "services.auth_service.session_api",
+    "message": "returning 401 for request that presented a valid unexpired session token"
+  },
+  {
+    "timestamp": "2026-09-27T22:31:07Z",
+    "level": "INFO",
+    "service": "auth-service",
+    "logger": "services.auth_service.session_api",
+    "message": "client retried same token and succeeded token_prefix=sess_4d2"
+  },
+  {
+    "timestamp": "2026-09-27T22:31:19Z",
+    "level": "WARNING",
+    "service": "auth-service",
+    "logger": "services.auth_service.session_api",
+    "message": "3106 unauthorized responses in 5m; failures not reproducible on retry"
+  },
+  {
+    "timestamp": "2026-09-27T22:31:33Z",
+    "level": "INFO",
+    "service": "auth-service",
+    "logger": "runtime",
+    "message": "gunicorn running 8 sync workers with 4 threads each"
+  },
+  {
+    "timestamp": "2026-09-28T08:04:58Z",
+    "level": "ERROR",
+    "service": "auth-service",
+    "logger": "services.auth_service.token_manager",
+    "message": "token validation raised on worker-2",
+    "trace": "Traceback (most recent call last):\n  File \"services/auth_service/token_manager.py\", line 22, in validate_token\n    del _token_cache[token]\nKeyError: 'sess_77bc10de42'"
+  },
+  {
+    "timestamp": "2026-09-28T08:05:12Z",
+    "level": "INFO",
+    "service": "auth-service",
+    "logger": "services.auth_service.token_manager",
+    "message": "auth.token.revoked token_prefix=sess_991"
+  }
 ]

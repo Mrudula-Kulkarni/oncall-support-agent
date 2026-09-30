@@ -105,6 +105,45 @@ non-reasoning model or a smaller one is the lever.
 
 ---
 
+## Fixture defects found by hand-testing the evidence chain
+
+Working `alrt_003` by hand — the check DAY1_PLAN.md asks for and nothing automated can do —
+turned up three real problems. None was visible to any existing check.
+
+**1. Three of five log fixtures were authored out of chronological order.** `show_scenario.py`
+and `data_access.load_logs()` both read them in file order, so for `alrt_003` (which fires at
+11:40:00) the first thing a reader saw was a block of entries from 14:21–14:22 — a *different*
+incident, two and a half hours later, whose tracebacks name `checkout_api.py` and
+`payment_processor.py`. The actual cache evidence sat at the bottom. A hand-test picked exactly
+those two wrong files, which is the correct read of what was presented.
+
+Fixed by sorting on disk, sorting again in `load_logs()` and `show_scenario.py` so a
+hand-edited fixture cannot regress it, and adding an ordering assertion to `verify_data.py`
+(verified it fires by reversing a fixture).
+
+**2. Two alerts fired before the logs they were about.** `alrt_002` was timestamped 26 hours
+before the earliest checkout entry; `alrt_005` fired 3.7 hours after its evidence with nothing
+contemporaneous. Timing was therefore unusable as a correlation signal for those two, which
+matters because correlating by timing is half of what spec §4.2 asks the Investigator to do.
+Realigned to 2026-09-28T14:26:00Z and 2026-09-28T13:09:00Z, both still after their introducing
+deploys. `verify_data.py` now asserts no alert precedes every log entry for its service.
+
+`alrt_007` and `alrt_012` looked incoherent by the same measure but are not: their own evidence
+sits at their alert time, and the far-off match belongs to the *other* alert for the same bug.
+That is by design — four bugs get two alerts each.
+
+**3. `baseline.py` was measuring the wrong thing.** It guessed the most frequently traced file,
+which counts traces belonging to other incidents in the same log, and ties when a service has
+one traceback per file. Payment-service ties exactly that way, so the "75%" figure quoted
+earlier was resolving a 1–1 tie by file order — sorting the fixtures silently moved it to 67%.
+
+Rewritten to take the traceback nearest in time to the alert, which is both what an engineer
+does and deterministic. **The floor is 10/12 = 83%**, and the only two misses are `alrt_003`
+and `alrt_009` — precisely the two scenarios with no traceback naming the answer. That is a
+higher bar for the Investigator than the number it replaces, and an honest one.
+
+---
+
 ## Departures from the spec
 
 1. **Model: `openai/gpt-oss-120b`, not Llama 3.3 70B.** Spec §3 names Groq's Llama 3.3 70B.
@@ -182,10 +221,12 @@ you whether the output is any good. Read a generated summary and ask:
 
 Spec §9.3, and the hardest phase. Two things from earlier work feed straight into it:
 
-- `baseline.py` says a no-LLM trace-grep scores 9/12 on file localization. The Investigator
-  has to beat that to be worth having, so report its accuracy as a delta against that floor.
-- `alrt_003` and `alrt_009` are the only two scenarios whose logs do not name the answer file
-  in a traceback. They are the whole difference between this eval and a regex. Confirm by hand
-  that both are solvable from the evidence alone *before* iterating on the Investigator's
-  prompt — otherwise a low score is ambiguous between a weak agent and a broken evidence
-  chain.
+- `baseline.py` says a no-LLM heuristic — nearest traceback to the alert — scores 10/12 on
+  file localization. The Investigator has to beat 83% to be worth having, so report its
+  accuracy as a delta against that floor, not on its own.
+- `alrt_003` and `alrt_009` are the only two scenarios the baseline misses, because their logs
+  carry no traceback naming the answer. They are the whole difference between this eval and a
+  regex. `alrt_003` was hand-verified solvable once the log ordering was fixed: cache size
+  climbing, heap at 94%, and an entry still held from seven days earlier, all inside two
+  minutes of the alert. `alrt_009` is still unverified — do that before iterating on the
+  Investigator's prompt, or a miss is ambiguous between a weak agent and a broken chain.

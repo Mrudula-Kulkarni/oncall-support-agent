@@ -35,7 +35,9 @@ def show(alert_id, reveal):
         print(f"    {k}: {v}")
 
     rule(f"LOGS  {service}")
-    for entry in json.loads((DATA / "logs" / f"{service}.json").read_text()):
+    entries = sorted(json.loads((DATA / "logs" / f"{service}.json").read_text()),
+                     key=lambda e: e["timestamp"])
+    for entry in entries:
         print(f"[{entry['timestamp']}] {entry['level']:<8} {entry['logger']}")
         print(f"    {entry['message']}")
         if "trace" in entry:

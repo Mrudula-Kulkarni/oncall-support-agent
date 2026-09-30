@@ -2,8 +2,8 @@
   "alert_id": "alrt_002",
   "service_id": "checkout-service",
   "type": "error_rate_spike",
-  "message": "Elevated 500s on POST /v1/checkout/session — AttributeError in billing payload construction",
-  "timestamp": "2026-09-27T09:15:00Z",
+  "message": "Elevated 500s on POST /v1/checkout/session \u2014 AttributeError in billing payload construction",
+  "timestamp": "2026-09-28T14:26:00Z",
   "source": "prometheus-alertmanager",
   "environment": "production",
   "metric": {

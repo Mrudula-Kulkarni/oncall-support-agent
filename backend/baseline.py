@@ -2,31 +2,45 @@
 
 Most alerts carry a stack trace that names the failing file outright. Any accuracy
 number for the Investigator has to be read against that, so this computes it: take
-the service's logs, pull `File "..."` out of every traceback, guess the file that
-appears most often. No LLM, no agent, no repo search.
+the service's logs, find the traceback closest in time to the alert, and name the
+deepest frame in it. No LLM, no agent, no repo search.
+
+"Closest to the alert" rather than "most frequent": a service's log holds evidence for
+two or three different incidents, so frequency counts traces belonging to other alerts.
+It also ties — payment-service has exactly one traceback per file — and a tie resolved
+by file order made this score swing between 8/12 and 9/12 on nothing but fixture
+ordering. Time to the alert is what an engineer actually uses, and it is deterministic.
 
 Whatever the Investigator scores later is only interesting as a delta on this.
 
     python3.13 baseline.py [-v]
 """
 
-import collections
 import json
 import pathlib
 import re
 import sys
+from datetime import datetime
 
 DATA = pathlib.Path(__file__).resolve().parent / "data"
 TRACE_LINE = re.compile(r'File "(services/[a-z_]+/[a-z_]+\.py)", line \d+, in (\w+)')
 
 
-def guess(service_id):
-    """Most frequently traced (file, function) in a service's logs."""
+def _ts(stamp):
+    return datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+
+
+def guess(service_id, alert_timestamp):
+    """The (file, function) from the traceback nearest in time to the alert."""
     entries = json.loads((DATA / "logs" / f"{service_id}.json").read_text())
-    hits = [h for e in entries for h in TRACE_LINE.findall(e.get("trace", ""))]
-    if not hits:
+    at = _ts(alert_timestamp)
+    traced = [e for e in entries if TRACE_LINE.search(e.get("trace", ""))]
+    if not traced:
         return None
-    return collections.Counter(hits).most_common(1)[0][0]
+    nearest = min(traced, key=lambda e: abs((_ts(e["timestamp"]) - at).total_seconds()))
+    # The deepest frame is where the exception was raised, which is the convention the
+    # labels follow; acceptable_functions covers the cases where the caller is fair too.
+    return TRACE_LINE.findall(nearest["trace"])[-1]
 
 
 def main():
@@ -38,7 +52,8 @@ def main():
 
     for s in scenarios:
         expected_file = s["expected_file"].replace("sample_repo/", "")
-        g = guess(s["service_id"])
+        alert = json.loads((DATA / "alerts" / f"{s['alert_id']}.json").read_text())
+        g = guess(s["service_id"], alert["timestamp"])
         got_file = g is not None and g[0] == expected_file
         got_func = got_file and g[1] in s["acceptable_functions"]
         file_hits += got_file
@@ -55,7 +70,7 @@ def main():
         print()
 
     n = len(scenarios)
-    print("no-LLM baseline — most-traced file in the service log")
+    print("no-LLM baseline — nearest traceback to the alert")
     print(f"  file           {file_hits}/{n} = {file_hits / n:.0%}")
     print(f"  file+function  {func_hits}/{n} = {func_hits / n:.0%}")
     print()
