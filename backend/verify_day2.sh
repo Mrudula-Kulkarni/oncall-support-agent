@@ -54,8 +54,9 @@ from app.pipeline import run_pipeline
 r = run_pipeline("alrt_001")
 assert r.triage is not None,        "triage missing"
 assert r.report.summary_markdown,   "empty summary"
-assert r.investigation is None,     "investigation should be null this phase"
-assert r.remediation is None,       "remediation should be null this phase"
+assert r.investigation is not None, "investigation missing (populated as of Day 3)"
+assert 0.0 <= r.investigation.confidence <= 1.0, "confidence out of range"
+assert r.remediation is None,       "remediation should be null until Day 4"
 assert r.duration_ms and r.duration_ms > 0, "duration_ms not recorded"
 print("ok")'
 
@@ -70,11 +71,18 @@ for word in ("escalat", "paged", "senior engineer", "on-call is", "team is"):
     assert word not in text, f"reporter claimed {word!r} with nothing escalated"
 print("ok")'
 
-check "reporter omits absent sections" "ok" $PY -c '
+# Investigation is populated as of Day 3, so "where it originates" is now expected. What must
+# still be absent is a remediation section, and Status must not contradict the section above it
+# by calling the root cause unidentified while a file is named.
+check "reporter sections match inputs" "ok" $PY -c '
 from app.pipeline import run_pipeline
-text = run_pipeline("alrt_006").report.summary_markdown.lower()
-for word in ("suggested fix", "where it originates"):
-    assert word not in text, f"reporter wrote a {word!r} section with no data for it"
+r = run_pipeline("alrt_006")
+text = r.report.summary_markdown.lower()
+assert r.remediation is None, "fixture assumption changed"
+assert "suggested fix" not in text, "reporter wrote a fix section with no remediation data"
+if r.investigation and r.investigation.suspected_file:
+    assert "has not been identified" not in text, \
+        "Status contradicts the located file above it"
 print("ok")'
 
 head "http surface"

@@ -32,7 +32,8 @@ infrastructure is involved, which is what makes the demo reliable and free to ru
 |---|---|
 | `backend/app/models.py` | Structured I/O contract for every agent |
 | `backend/app/main.py` | FastAPI entrypoint (`/health`, `/scenarios`, `/run`, CORS) |
-| `backend/app/agents/` | One module per agent (Triage, Reporter so far) |
+| `backend/app/agents/` | One module per agent (Triage, Investigator, Reporter) |
+| `backend/app/repo_search.py` | Deterministic candidate ranking over `sample_repo/` — no LLM |
 | `backend/app/pipeline.py` | Runs the stages that exist and times the run |
 | `backend/app/llm.py` | Groq client — model and sampling in one place |
 | `backend/app/data_access.py` | All fixture reads (moves behind MCP on Day 5) |
@@ -105,8 +106,23 @@ source files it points to. See `DAY1_PLAN.md`.
 its prompt was tuned against those same 12 with nothing held out, so that is a fit to the set
 rather than a measure of generalisation — `DAY2_PLAN.md` records what each revision fixed.
 
-Next: the Investigator (spec §9.3), which is where root-cause localisation — and the one metric
-this project can honestly report — actually gets measured.
+**Phase 3** — the Investigator, plus the confidence branch that escalates to a human below 0.5.
+See `DAY3_PLAN.md`. This is the phase that produces the §8 metric:
+
+| Measure | Value |
+|---|---|
+| Localization — file | 12/12 |
+| Localization — file + function | 11/12 |
+| No-LLM floor (`baseline.py`) | 10/12 |
+| **Delta vs floor** | **+2, and both are the scenarios no heuristic can reach** |
+
+The delta is the honest figure, and its shape matters more than its size. Most production alerts
+carry a stack trace naming the failing file, so the two scenarios worth pointing at are the ones
+where no trace exists: an unbounded cache found by reading a declared-but-unenforced TTL, and an
+off-by-one found from `received=500 written=499`. As with triage, the prompt was iterated against
+these 12 with nothing held out, so 12/12 is a fit to the set, not an accuracy claim.
+
+Next: Remediation + RAG over the 18 past incidents (spec §9.4).
 
 Running the two phases that exist:
 

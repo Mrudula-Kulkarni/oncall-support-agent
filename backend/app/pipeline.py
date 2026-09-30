@@ -12,12 +12,13 @@ defensible metrics this project can report.
 import time
 
 from . import data_access
+from .agents.investigator import run_investigator
 from .agents.reporter import run_reporter
 from .agents.triage import run_triage
 from .models import PipelineResult
 
 # Below this, the Investigator's hypothesis is treated as too weak to remediate from and the
-# run escalates instead (spec §4.2). Unused until the Investigator exists.
+# run escalates to a human instead (spec §4.2).
 CONFIDENCE_THRESHOLD = 0.5
 
 
@@ -30,12 +31,16 @@ def run_pipeline(alert_id: str) -> PipelineResult:
     alert = data_access.load_alert(alert_id)
 
     triage = run_triage(alert)
+    investigation = run_investigator(alert, triage)
 
-    # Stages 2 and 3 land in later phases. The Reporter is told they are missing rather than
-    # being handed empty objects it might read as "investigated, found nothing".
-    investigation = None
+    # Spec §4.2: below the threshold the hypothesis is too weak to build a fix on, so the run
+    # escalates to a human and remediation is skipped. The Reporter still runs either way —
+    # a human being asked to take over needs the summary more, not less.
+    escalated = investigation.confidence < CONFIDENCE_THRESHOLD
+
+    # Remediation lands in the next phase. The Reporter is told it is missing rather than
+    # handed an empty object it might read as "a fix was considered and none was found".
     remediation = None
-    escalated = False
 
     report = run_reporter(
         alert,

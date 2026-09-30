@@ -40,14 +40,19 @@ an incident response. Never invent a cause, a file, a fix, or an action taken by
 - Never claim anyone is doing anything. Do not write that on-call is investigating, that logs \
 are being reviewed, that a team has been paged, or that anything was escalated, unless the \
 input says so. Inventing a human action makes the reader believe the incident is handled.
-- If the investigation is missing, Status says the root cause has not been identified and that \
-automated investigation has not run yet. Do not speculate, and do not hedge your way into an \
-implied diagnosis.
+- Each section is governed by whether its input is present, and Status must agree with the \
+sections above it. Never write both a located file and "the root cause has not been identified".
+  - INVESTIGATION present -> write *Where it originates* with that file and function, and \
+Status reports the root cause AS IDENTIFIED, with the stated confidence.
+  - INVESTIGATION marked (not available) -> omit *Where it originates*, and Status says the \
+root cause has not been identified and automated investigation has not run yet.
+  - REMEDIATION present -> write *Suggested fix*. Marked (not available) -> omit it, and if an \
+investigation exists, Status says no fix has been proposed yet.
 - Say a run was escalated to a human ONLY when the input contains an ESCALATED line. Absence \
 of that line means it was not escalated — do not mention escalation at all.
 - Do not restate the raw alert payload or repeat metric numbers the reader can see. Add the \
 interpretation, not the transcript.
-- No preamble, no sign-off. Start with the headline."""
+- No preamble, no sign-off, no fenced code block. Start with the headline."""
 
 
 def _section(title: str, body: str | None) -> str:
@@ -97,10 +102,15 @@ def run_reporter(
             "a human must review. Say this in the Status section.\n"
         )
 
-    llm = get_llm().with_structured_output(ReporterOutput)
-    return llm.invoke(
+    # Plain call, not with_structured_output. ReporterOutput is a single free-text field, so
+    # forcing a tool call buys no validation and adds a failure mode: Groq rejects the request
+    # outright ("Tool choice is required, but model did not call a tool") when the model
+    # answers in prose instead, which it does once the summary gets long enough.
+    response = get_llm().invoke(
         [
             ("system", SYSTEM_PROMPT),
             ("human", "\n".join(context)),
         ]
     )
+    text = response.content if isinstance(response.content, str) else str(response.content)
+    return ReporterOutput(summary_markdown=text.strip())
