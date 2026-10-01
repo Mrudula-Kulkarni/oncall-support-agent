@@ -76,6 +76,15 @@ def main():
         if s["expected_category"] not in runbooks:
             problems.append(f"{aid}: no runbook for category {s['expected_category']}")
 
+    # Every scenario must name a past incident that exists, or RAG retrieval cannot be scored.
+    incident_ids = {q.stem for q in (DATA / "incidents").glob("*.md")}
+    for s in scenarios:
+        inc = s.get("expected_incident_id")
+        if not inc:
+            problems.append(f"{s['alert_id']}: no expected_incident_id")
+        elif inc not in incident_ids:
+            problems.append(f"{s['alert_id']}: expected_incident_id {inc} does not exist")
+
     # Log fixtures must read oldest-first. Authored out of order, a later unrelated
     # incident's stack traces land ahead of the evidence for the alert under investigation,
     # which points a reader at the wrong file. See DAY2_PLAN.md.

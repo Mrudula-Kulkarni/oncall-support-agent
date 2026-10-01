@@ -13,6 +13,7 @@ import time
 
 from . import data_access
 from .agents.investigator import run_investigator
+from .agents.remediation import run_remediation
 from .agents.reporter import run_reporter
 from .agents.triage import run_triage
 from .models import PipelineResult
@@ -38,9 +39,13 @@ def run_pipeline(alert_id: str) -> PipelineResult:
     # a human being asked to take over needs the summary more, not less.
     escalated = investigation.confidence < CONFIDENCE_THRESHOLD
 
-    # Remediation lands in the next phase. The Reporter is told it is missing rather than
-    # handed an empty object it might read as "a fix was considered and none was found".
-    remediation = None
+    # Skipped on escalation, by design. Spec §4.2: a fix built on a hypothesis the pipeline
+    # does not believe is worse than no fix, because it reads as authoritative. The Reporter is
+    # told remediation is absent rather than handed an empty object it might present as "a fix
+    # was considered and none was found".
+    remediation = (
+        None if escalated else run_remediation(alert, triage, investigation)
+    )
 
     report = run_reporter(
         alert,

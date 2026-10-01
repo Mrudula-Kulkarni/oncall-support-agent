@@ -31,8 +31,10 @@ infrastructure is involved, which is what makes the demo reliable and free to ru
 | Path | What it is |
 |---|---|
 | `backend/app/models.py` | Structured I/O contract for every agent |
-| `backend/app/main.py` | FastAPI entrypoint (`/health`, `/scenarios`, `/run`, CORS) |
-| `backend/app/agents/` | One module per agent (Triage, Investigator, Reporter) |
+| `backend/app/main.py` | FastAPI entrypoint (`/health`, `/scenarios`, `/run`, `/run/stream`, CORS) |
+| `backend/app/graph.py` | The four agents as a LangGraph, with the confidence branch and streaming |
+| `backend/app/rag.py` | Chroma index over the past-incident corpus |
+| `backend/app/agents/` | One module per agent (Triage, Investigator, Remediation, Reporter) |
 | `backend/app/repo_search.py` | Deterministic candidate ranking over `sample_repo/` — no LLM |
 | `backend/app/pipeline.py` | Runs the stages that exist and times the run |
 | `backend/app/llm.py` | Groq client — model and sampling in one place |
@@ -122,7 +124,29 @@ where no trace exists: an unbounded cache found by reading a declared-but-unenfo
 off-by-one found from `received=500 written=499`. As with triage, the prompt was iterated against
 these 12 with nothing held out, so 12/12 is a fit to the set, not an accuracy claim.
 
-Next: Remediation + RAG over the 18 past incidents (spec §9.4).
+**Phase 4** — Remediation with RAG over the past incidents, and LangGraph orchestration. See
+`DAY4_PLAN.md`. All four agents now run end to end, and `POST /run/stream` emits one server-sent
+event per agent as it finishes.
+
+Retrieval is where this phase got interesting, and the honest answer is a tie:
+
+| Method | recall@1 | recall@3 |
+|---|---|---|
+| Keyword overlap, no embeddings, no model | 8/12 | 11/12 |
+| **Chroma (all-MiniLM-L6-v2)** | 7/12 | **12/12** |
+
+Chroma is worse at rank 1 and better at rank 3 — net +1 at the k the agent retrieves. The corpus
+is 18 documents and the mirroring incidents were authored in the alerts' own vocabulary, so there
+is no vocabulary gap for embeddings to bridge. The vector store is the right structure as a corpus
+grows; on this one it ties a forty-line keyword matcher, and `DAY4_PLAN.md` says so rather than
+reporting 12/12 as a win.
+
+Grounding is enforced in code: `referenced_incidents` is filtered to ids retrieval actually
+returned, so a fix cannot cite an incident the model invented or recalled from pretraining.
+
+Next: the Next.js dashboard (spec §7) — scenario picker, live reasoning trail over the stream
+endpoint, and a final panel that renders the escalated branch as a real state rather than an
+error.
 
 Running the two phases that exist:
 
