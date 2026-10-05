@@ -1,15 +1,16 @@
 # Day 4 — Remediation + RAG, and LangGraph orchestration
 
-**Status: two of three items complete (2026-10-01).** Source of truth:
-`OnCall_Support_Agent_Build_Spec.md` (§4.3 Remediation, §9.4 RAG, §9.5 orchestration, §7 frontend).
+**Status: complete (2026-10-05).** Source of truth: `OnCall_Support_Agent_Build_Spec.md`
+(§4.3 Remediation, §9.4 RAG, §9.5 orchestration, §7 frontend).
 
 | Spec item | State |
 |---|---|
 | §9.4 — Remediation agent + RAG over past incidents | done |
 | §9.5 — LangGraph orchestration with the confidence branch | done |
-| §7 / §9.6 — Next.js dashboard | **not started** |
+| §7 / §9.6 — Next.js dashboard | done |
 
-All four agents now run end to end, and `POST /run/stream` streams each one as it finishes.
+All four agents run end to end, `POST /run/stream` streams each as it finishes, and the
+dashboard renders the trail live.
 
 ---
 
@@ -81,6 +82,49 @@ ways to run the same four agents, where the graph adds observability rather than
 
 ---
 
+## Grounding: the one metric here that is not saturated
+
+`eval_remediation.py`, full clean run:
+
+| Measure | Value |
+|---|---|
+| Grounded in some retrieved incident | 12/12 |
+| Cited the expected mirror | 12/12 |
+| Citation precision | **12/12** |
+
+Precision is the number that carries weight. Retrieval hands the agent three candidates and it
+cited exactly the right one every time, never padding the list — a "cite everything retrieved"
+strategy would score 12/36 = 33%. Unlike retrieval, there is no trivial baseline that reaches
+this, because the work is choosing among three plausible cases rather than finding them.
+
+Read alongside the retrieval tie, the split is informative: retrieval on this corpus is easy, and
+selecting and using the right precedent is where the agent adds something.
+
+---
+
+## The dashboard (§7)
+
+Next.js 16, Tailwind v4, deployed target Vercel. Three pieces the spec asks for:
+
+- **Scenario picker** — the 12 presets from `GET /scenarios`. No free-text input, per §7, which
+  keeps a public demo reliable and its cost bounded. The alert's `type` field is deliberately not
+  displayed: it holds the category Triage is being asked to produce, and showing it beside
+  Triage's answer would make a classification look like a lookup.
+- **Live reasoning trail** — consumes `POST /run/stream`. Each agent's output appears as it
+  lands, with a confidence meter marked at the 0.5 escalation threshold. This is the payoff for
+  LangGraph: a run takes tens of seconds, so the alternative is a spinner.
+- **Final panel** — located file and function, the suggested fix rendered from markdown, and the
+  incidents it cited. Escalation renders as a first-class outcome rather than an error, because
+  that is what it is.
+
+`EventSource` is not usable for the stream: it only issues GET and the run is a POST with a body,
+so `lib/api.ts` parses the SSE framing off the fetch body stream by hand.
+
+Verified end to end against the live backend by driving headless Chrome over CDP — scenarios
+load, a click starts the run, and the trail fills in agent by agent.
+
+---
+
 ## Problems found and fixed
 
 1. **The citation validator knew only one of two identifier schemes.** Incidents are named twice
@@ -133,9 +177,16 @@ makes this visible, and `/run/stream` mitigates it (the user watches progress ra
 spinner) without fixing it. The lever remains prompt size: the Investigator receives the whole
 log, the whole deploy history and the full source of every candidate.
 
-**Groq free-tier rate limits** now bite on every full eval. The evals retry with backoff and
-report upstream failures apart from wrong answers, but a complete measurement run takes patience.
-`eval_retrieval.py` and `eval_remediation.py` have not yet had a clean full run.
+**Groq free-tier rate limits** are a demo constraint, not just an eval annoyance. The ceiling is
+8000 tokens per minute, and a single Investigator call requested 3414 of them — so roughly two
+full pipeline runs per minute before a 429. A live demo that gets clicked twice in quick
+succession will hit it. The dashboard surfaces this honestly (the run fails with the upstream
+message and a hint to retry) rather than hanging, but the real fix is the same prompt-size work
+that would address latency: the Investigator receives the entire log, the entire deploy history
+and the full source of every candidate.
+
+Both evals have now had clean full runs: retrieval +1 at recall@3, grounding 12/12 on all three
+measures.
 
 ---
 

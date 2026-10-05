@@ -41,7 +41,13 @@ Ground the fix in the retrieved incidents. They are the point: this team has sol
 of problem before, and what worked then is better evidence than anything you can invent. For \
 each retrieved incident, use its **Fix** section — that is what actually resolved it.
 
-`suggested_fix` is markdown, under 180 words:
+`suggested_fix` is markdown, under 180 words. Use short paragraphs and at most one fenced code \
+block, placed at the TOP LEVEL — never indented inside a numbered or bulleted list, because a \
+fence nested in a list item renders as one broken block per line. Prefer describing the change \
+in prose; include code only when the exact edit is not otherwise clear, and keep it to a few \
+lines rather than a full rewrite of the function.
+
+Structure it as:
 - the change to make, specifically enough to act on: which file, which function, what to alter. \
 Name the mechanism, not the symptom.
 - how it was fixed before, naming the incident it comes from.

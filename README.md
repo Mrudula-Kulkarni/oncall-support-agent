@@ -46,7 +46,7 @@ infrastructure is involved, which is what makes the demo reliable and free to ru
 | `backend/data/runbooks/` | 5 runbooks, keyed by alert category |
 | `backend/data/eval/` | Labeled ground truth for measuring localization accuracy |
 | `sample_repo/` | The "production" codebase the agents investigate — contains 8 planted bugs |
-| `frontend/` | Next.js dashboard (later phase) |
+| `frontend/` | Next.js dashboard — scenario picker, live reasoning trail, final panel |
 
 `sample_repo/` is deliberately *not* the application code. It is the target of
 investigation: five services with eight planted bugs, plus clean decoy files so locating the
@@ -144,9 +144,25 @@ reporting 12/12 as a win.
 Grounding is enforced in code: `referenced_incidents` is filtered to ids retrieval actually
 returned, so a fix cannot cite an incident the model invented or recalled from pretraining.
 
-Next: the Next.js dashboard (spec §7) — scenario picker, live reasoning trail over the stream
-endpoint, and a final panel that renders the escalated branch as a real state rather than an
-error.
+**The dashboard** (spec §7) is built: the 12 presets from `GET /scenarios`, a reasoning trail
+that fills in agent by agent off `POST /run/stream`, and a final panel with the located file, the
+suggested fix and the incidents it cited. Escalation renders as a first-class outcome rather than
+an error, because that is what it is. See `frontend/README.md`.
+
+Grounding is the one measure here that is not saturated by a trivial baseline:
+
+| Measure | Value |
+|---|---|
+| Fix grounded in a retrieved incident | 12/12 |
+| Cited the expected mirror | 12/12 |
+| Citation precision | 12/12 |
+
+Retrieval hands the agent three candidates and it cited exactly the right one every time, never
+padding — "cite everything retrieved" would score 12/36. Retrieval on this corpus is easy;
+choosing and using the right precedent is where the agent adds something.
+
+Next: the custom MCP server (spec §6, §9.7) to move log, deploy and runbook access behind a tool
+interface, then deployment and the full eval run (§9.8).
 
 Running the two phases that exist:
 
