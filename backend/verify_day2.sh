@@ -49,15 +49,25 @@ assert "failed_deploy" not in body, "the category leaked into the prompt body"
 print("ok")'
 
 head "pipeline"
-check "run_pipeline populates" "ok" $PY -c '
-from app.pipeline import run_pipeline
+# Asserts the CURRENT pipeline contract, all four agents. Earlier versions of this check
+# pinned stages to "null until a later phase", which silently went stale the moment that phase
+# landed — remediation and the route surface both did exactly that.
+check "run_pipeline populates every stage" "ok" $PY -c '
+from app.pipeline import run_pipeline, CONFIDENCE_THRESHOLD
 r = run_pipeline("alrt_001")
 assert r.triage is not None,        "triage missing"
-assert r.report.summary_markdown,   "empty summary"
-assert r.investigation is not None, "investigation missing (populated as of Day 3)"
+assert r.investigation is not None, "investigation missing"
 assert 0.0 <= r.investigation.confidence <= 1.0, "confidence out of range"
-assert r.remediation is None,       "remediation should be null until Day 4"
+assert r.report.summary_markdown,   "empty summary"
 assert r.duration_ms and r.duration_ms > 0, "duration_ms not recorded"
+# Remediation runs unless the run escalated — that branch is the §4.2 contract.
+escalated = r.investigation.confidence < CONFIDENCE_THRESHOLD
+assert r.escalated_to_human == escalated, "escalated_to_human disagrees with the threshold"
+if escalated:
+    assert r.remediation is None, "remediation ran on an escalated run"
+else:
+    assert r.remediation is not None, "remediation missing on a confident run"
+    assert r.remediation.suggested_fix, "empty suggested_fix"
 print("ok")'
 
 # The Reporter invented "escalated to a senior engineer" on its first run, with nothing
@@ -71,18 +81,20 @@ for word in ("escalat", "paged", "senior engineer", "on-call is", "team is"):
     assert word not in text, f"reporter claimed {word!r} with nothing escalated"
 print("ok")'
 
-# Investigation is populated as of Day 3, so "where it originates" is now expected. What must
-# still be absent is a remediation section, and Status must not contradict the section above it
-# by calling the root cause unidentified while a file is named.
+# Each section must match whether its input is present, and Status must not contradict the
+# sections above it — the Reporter once named a file under "Where it originates" while Status
+# still read "investigation has not run yet".
 check "reporter sections match inputs" "ok" $PY -c '
 from app.pipeline import run_pipeline
 r = run_pipeline("alrt_006")
 text = r.report.summary_markdown.lower()
-assert r.remediation is None, "fixture assumption changed"
-assert "suggested fix" not in text, "reporter wrote a fix section with no remediation data"
 if r.investigation and r.investigation.suspected_file:
     assert "has not been identified" not in text, \
         "Status contradicts the located file above it"
+if r.remediation:
+    assert "suggested fix" in text, "remediation ran but the report has no fix section"
+else:
+    assert "suggested fix" not in text, "reporter wrote a fix section with no remediation data"
 print("ok")'
 
 head "http surface"
