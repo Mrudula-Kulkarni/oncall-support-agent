@@ -15,10 +15,10 @@ Two honesty constraints are enforced in code rather than trusted to the prompt:
   2. A fix with no surviving citation is reported as ungrounded rather than presented as
      evidence-based.
 
-`get_runbook(category)` comes from `data_access`, which spec §6 moves behind MCP on Day 5.
+`get_runbook(category)` comes through `tools`, the shared interface spec §6 puts behind MCP.
 """
 
-from .. import data_access, rag
+from .. import rag, tools
 from ..llm import get_llm
 from ..models import (
     Alert,
@@ -102,7 +102,7 @@ def run_remediation(
     # genuinely grounded fix as ungrounded.
     alias = {h["incident_id"]: h["incident_id"] for h in hits}
     alias.update({h["incident_ref"]: h["incident_id"] for h in hits if h["incident_ref"]})
-    runbook = data_access.load_runbook(triage.category.value)
+    runbook = tools.get_runbook(triage.category.value)
 
     context = f"""\
 LOCATED FAULT

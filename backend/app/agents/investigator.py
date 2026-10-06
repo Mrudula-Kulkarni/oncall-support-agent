@@ -2,7 +2,7 @@
 
 Three steps, only the last of which is an LLM call:
 
-  1. fetch logs and deploy history through `data_access` (these move behind MCP on Day 5)
+  1. fetch logs and deploy history through `tools` (spec §6's MCP-backed interface)
   2. rank candidate files from that evidence via `repo_search` — deterministic, no model
   3. hand the candidates, their source and the evidence to the model, which picks one and
      explains why
@@ -18,7 +18,7 @@ one place in the pipeline where deliberation is worth the latency. That latency 
 Lower it via the argument rather than editing this call, so the eval can measure the trade.
 """
 
-from .. import data_access, repo_search
+from .. import repo_search, tools
 from ..llm import get_llm
 from ..models import Alert, InvestigatorOutput, TriageOutput
 
@@ -103,8 +103,9 @@ def _format_candidates(candidates: list[dict]) -> str:
 
 def run_investigator(alert: Alert, triage: TriageOutput) -> InvestigatorOutput:
     """Locate the fault for one alert. Raises if the model returns something off-contract."""
-    logs = data_access.load_logs(alert.service_id)
-    deploys = data_access.load_deploys(alert.service_id)
+    # Through the shared tool interface (spec §6), not the fixture reader directly.
+    logs = tools.fetch_logs(alert.service_id)
+    deploys = tools.get_recent_deploys(alert.service_id)
     candidates = repo_search.candidate_files(alert.service_id, logs, deploys, alert.timestamp)
 
     context = f"""\

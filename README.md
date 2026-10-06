@@ -34,6 +34,8 @@ infrastructure is involved, which is what makes the demo reliable and free to ru
 | `backend/app/main.py` | FastAPI entrypoint (`/health`, `/scenarios`, `/run`, `/run/stream`, CORS) |
 | `backend/app/graph.py` | The four agents as a LangGraph, with the confidence branch and streaming |
 | `backend/app/rag.py` | Chroma index over the past-incident corpus |
+| `backend/app/tools.py` | The shared tool interface — in-process, or over MCP with `USE_MCP_TOOLS=1` |
+| `backend/mcp_server/` | MCP server exposing `fetch_logs`, `get_recent_deploys`, `get_runbook` |
 | `backend/app/agents/` | One module per agent (Triage, Investigator, Remediation, Reporter) |
 | `backend/app/repo_search.py` | Deterministic candidate ranking over `sample_repo/` — no LLM |
 | `backend/app/pipeline.py` | Runs the stages that exist and times the run |
@@ -161,8 +163,38 @@ Retrieval hands the agent three candidates and it cited exactly the right one ev
 padding — "cite everything retrieved" would score 12/36. Retrieval on this corpus is easy;
 choosing and using the right precedent is where the agent adds something.
 
-Next: the custom MCP server (spec §6, §9.7) to move log, deploy and runbook access behind a tool
-interface, then deployment and the full eval run (§9.8).
+**Phase 5** — the custom MCP server (spec §6). Three tools over the synthetic data, runnable
+standalone over stdio so any MCP client can call them:
+
+```bash
+cd backend && ./.venv/bin/python -m mcp_server.server
+```
+
+Logs, deploys and runbooks go behind it because they are lookups several agents share. Code
+lookup deliberately does not: a repo search gains nothing from a protocol layer, so
+`repo_search.py` stays direct. The pipeline calls these in-process by default and over MCP with
+`USE_MCP_TOOLS=1` — both paths verified to return identical data. Putting a subprocess handshake
+on every request to read local JSON would buy latency and a failure mode for nothing, and spec §6
+explicitly allows the direct path.
+
+See `DAY5_PLAN.md`. Deployment config is in `render.yaml` and `DEPLOY.md`; the deploy itself needs
+your Render and Vercel accounts.
+
+## Every measured result
+
+| Metric | Agent | No-LLM floor | Delta |
+|---|---|---|---|
+| Localization — file | 12/12 | 10/12 | **+2** |
+| Localization — file + function | 12/12 | 10/12 | **+2** |
+| Triage category | 12/12 | — | — |
+| Retrieval recall@3 | 12/12 | 11/12 | +1 |
+| Retrieval recall@1 | 7/12 | 8/12 | −1 |
+| Fix grounded in a retrieved incident | 12/12 | — | — |
+| Citation precision | 12/12 | 12/36 if citing all | — |
+
+Every prompt was iterated against these same 12 scenarios with nothing held out, so each 12/12 is
+a fit to the set rather than a generalisation estimate. The defensible phrasing is "located the
+correct file in 12 of 12 labelled scenarios, +2 over a no-LLM baseline" — not "100% accurate".
 
 Running the two phases that exist:
 

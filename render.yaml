@@ -1,0 +1,30 @@
+# Render blueprint for the backend (spec §9.8). The frontend goes to Vercel separately.
+#
+# Two things about the free tier that matter here:
+#
+# 1. Chroma downloads all-MiniLM-L6-v2 (~79MB) on first use and builds the index from
+#    data/incidents/. The disk is ephemeral, so that happens again after every cold start.
+#    `preDeployCommand` warms it at deploy time so the first user request is not the one that
+#    pays for it.
+# 2. Free instances sleep after inactivity and cold-start slowly. A demo link that has been idle
+#    will take ~30s to answer its first request before any agent has run.
+services:
+  - type: web
+    name: oncall-support-agent-api
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: python -c "from app.rag import search; search('warm the index', k=1)"
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.7
+      - key: GROQ_API_KEY
+        sync: false          # set in the Render dashboard; never committed
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false          # the Vercel URL, once it exists
