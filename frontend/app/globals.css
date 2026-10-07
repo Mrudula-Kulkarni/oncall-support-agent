@@ -1,2 +1,105 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/**
+ * Dark-first, because this is an on-call console and that is the genre convention — Datadog,
+ * Sentry, Grafana. It also lets severity colour carry real signal instead of competing with a
+ * white page.
+ */
+
+@theme {
+  --color-base: #070b14;
+  --color-surface: #0d1320;
+  --color-surface-2: #131b2c;
+  --color-line: #1e2a42;
+  --color-line-bright: #2b3a58;
+
+  --color-ink: #e8edf7;
+  --color-ink-dim: #9aa8c4;
+  --color-ink-faint: #64748b;
+
+  --color-accent: #38bdf8;
+  --color-accent-deep: #0ea5e9;
+
+  --color-crit: #f43f5e;
+  --color-high: #fb923c;
+  --color-med: #fbbf24;
+  --color-low: #64748b;
+  --color-ok: #34d399;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "SF Mono", monospace;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-base);
+  color: var(--color-ink);
+  /* Two soft pools of light so the page has depth instead of reading as a flat slab. */
+  background-image:
+    radial-gradient(60rem 40rem at 12% -10%, rgba(56, 189, 248, 0.07), transparent 60%),
+    radial-gradient(50rem 34rem at 92% 0%, rgba(168, 85, 247, 0.05), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* A hairline grid in the header, very low contrast — texture, not decoration you notice. */
+.grid-texture {
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 2.25rem 2.25rem;
+}
+
+@keyframes sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+/* Runs along the top of an in-flight card so "working" is visible at a glance. */
+.sweep::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  block-size: 1px;
+  inline-size: 33%;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  animation: sweep 1.8s ease-in-out infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.rise {
+  animation: rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sweep::after,
+  .rise {
+    animation: none;
+  }
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.28);
+}
+
+/* Scrollbars, so long code blocks do not punch a bright hole in a dark page. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-bright) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line-bright);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
