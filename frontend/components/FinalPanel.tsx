@@ -2,7 +2,7 @@
 
 import Markdown from "react-markdown";
 import type { PipelineResult } from "@/lib/types";
-import { Card, CategoryBadge, Mono, SectionLabel, SeverityBadge, Stat } from "./ui";
+import { Card, Mono, SectionLabel } from "./ui";
 
 /**
  * The final panel (spec §7): located file and function, the suggested fix, the past incidents
@@ -28,24 +28,9 @@ const PROSE = [
   "prose-pre:bg-base prose-pre:p-3 prose-pre:text-[11px] prose-pre:leading-relaxed",
 ].join(" ");
 
-const METRIC_LABELS: Record<string, string> = {
-  error_rate: "error rate",
-  baseline_error_rate: "normal error rate",
-  affected_requests_5m: "requests hit (5 min)",
-  p99_latency_ms: "p99 latency",
-  baseline_p99_latency_ms: "normal p99",
-  memory_used_pct: "memory used",
-  gc_pause_ms_p99: "GC pause (p99)",
-  minutes_since_deploy: "minutes since deploy",
-  deploy_id: "deploy",
-  gateway_timeout_count_5m: "gateway timeouts (5 min)",
-  db_statement_timeout_count_5m: "DB timeouts (5 min)",
-  restart_count: "restarts",
-  queue_depth: "queue depth",
-};
 
 export function FinalPanel({ result }: { result: PipelineResult }) {
-  const { alert, triage, investigation, remediation, report, escalated_to_human } = result;
+  const { investigation, remediation, report, escalated_to_human } = result;
 
   return (
     <div className="rise space-y-5">
@@ -131,34 +116,6 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
         </section>
       )}
 
-      {triage && (
-        <section>
-          <SectionLabel>Alert</SectionLabel>
-          <Card className="p-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <SeverityBadge severity={triage.severity} />
-              <CategoryBadge category={triage.category} />
-              <Mono>{alert.service_id}</Mono>
-              <Mono>{alert.alert_id}</Mono>
-            </div>
-            {alert.title && (
-              <p className="mt-3 text-sm font-medium text-ink">{alert.title}</p>
-            )}
-            <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-ink-faint">
-              {alert.message}
-            </p>
-            <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-3 sm:grid-cols-3">
-              {Object.entries(alert.metric).map(([key, value]) => (
-                <Stat
-                  key={key}
-                  label={METRIC_LABELS[key] ?? key.replace(/_/g, " ")}
-                  value={String(value)}
-                />
-              ))}
-            </dl>
-          </Card>
-        </section>
-      )}
     </div>
   );
 }

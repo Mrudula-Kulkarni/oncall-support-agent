@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AlertDetail } from "@/components/AlertDetail";
 import { FinalPanel } from "@/components/FinalPanel";
 import { ReasoningTrail } from "@/components/ReasoningTrail";
 import { PipelineIntro } from "@/components/PipelineIntro";
@@ -40,6 +41,17 @@ export default function Dashboard() {
     return () => abortRef.current?.abort();
   }, []);
 
+  /** Picking a scenario only shows it. Running is a deliberate second step — an exploratory
+   * click should not spend three LLM calls, and the rate limit is tight. */
+  const select = useCallback((alertId: string) => {
+    abortRef.current?.abort();
+    setSelected(alertId);
+    setRunning(false);
+    setRunError(null);
+    setCompleted([]);
+    setResult({});
+  }, []);
+
   const run = useCallback(async (alertId: string) => {
     abortRef.current?.abort();
     const controller = new AbortController();
@@ -69,6 +81,8 @@ export default function Dashboard() {
     }
   }, []);
 
+  const selectedAlert = scenarios.find((s) => s.alert_id === selected) ?? null;
+  const started = running || completed.length > 0;
   const finished = !running && completed.includes("report");
 
   return (
@@ -125,12 +139,22 @@ export default function Dashboard() {
               scenarios={scenarios}
               selected={selected}
               running={running}
-              onSelect={run}
+              onSelect={select}
             />
           </aside>
 
           <main className="min-w-0 space-y-6">
             {!selected && !loadError && <PipelineIntro />}
+
+            {selectedAlert && (
+              <AlertDetail
+                alert={selectedAlert}
+                triage={result.triage}
+                running={running}
+                hasRun={completed.length > 0}
+                onRun={() => run(selectedAlert.alert_id)}
+              />
+            )}
 
             {runError && (
               <Card className="border-rose-500/30 bg-rose-500/[0.06] p-4">
@@ -146,7 +170,7 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {selected && (
+            {started && (
               <Card active={running} className="p-5">
                 <ReasoningTrail
                   result={result}
