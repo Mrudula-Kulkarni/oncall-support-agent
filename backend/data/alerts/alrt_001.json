@@ -1,8 +1,9 @@
 {
   "alert_id": "alrt_001",
+  "title": "Checkout payments failing for some customers",
   "service_id": "checkout-service",
   "type": "error_rate_spike",
-  "message": "AttributeError: 'NoneType' object has no attribute 'line1' — checkout payment authorization failing",
+  "message": "AttributeError: 'NoneType' object has no attribute 'line1' \u2014 checkout payment authorization failing",
   "timestamp": "2026-09-28T14:22:00Z",
   "source": "prometheus-alertmanager",
   "environment": "production",

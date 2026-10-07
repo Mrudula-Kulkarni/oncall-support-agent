@@ -1,8 +1,9 @@
 {
   "alert_id": "alrt_008",
+  "title": "Login failures under load",
   "service_id": "auth-service",
   "type": "error_rate_spike",
-  "message": "Sporadic session validation failures under load — errors do not reproduce on retry",
+  "message": "Sporadic session validation failures under load \u2014 errors do not reproduce on retry",
   "timestamp": "2026-09-28T08:05:00Z",
   "source": "datadog-monitor",
   "environment": "production",

@@ -1,5 +1,6 @@
 {
   "alert_id": "alrt_003",
+  "title": "Checkout slow, memory filling up",
   "service_id": "checkout-service",
   "type": "latency_spike",
   "message": "p99 latency on checkout session creation degraded; container memory at 94% of limit and climbing",

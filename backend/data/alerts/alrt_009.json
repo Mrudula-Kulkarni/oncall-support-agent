@@ -1,8 +1,9 @@
 {
   "alert_id": "alrt_009",
+  "title": "Overselling stock that isn't there",
   "service_id": "inventory-service",
   "type": "error_rate_spike",
-  "message": "Oversell rate elevated — stock reconciliation reporting stale on_hand values for a subset of SKUs",
+  "message": "Oversell rate elevated \u2014 stock reconciliation reporting stale on_hand values for a subset of SKUs",
   "timestamp": "2026-09-26T19:48:00Z",
   "source": "datadog-monitor",
   "environment": "production",

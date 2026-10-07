@@ -1,5 +1,6 @@
 {
   "alert_id": "alrt_005",
+  "title": "Card payments failing at a critical rate",
   "service_id": "payment-service",
   "type": "error_rate_spike",
   "message": "Card authorization error rate critical \u2014 transient gateway 504s surfacing directly to customers",

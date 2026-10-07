@@ -1,8 +1,9 @@
 {
   "alert_id": "alrt_004",
+  "title": "Card payments timing out",
   "service_id": "payment-service",
   "type": "error_rate_spike",
-  "message": "Authorization failures elevated — requests.Timeout reaching card gateway, no retry observed",
+  "message": "Authorization failures elevated \u2014 requests.Timeout reaching card gateway, no retry observed",
   "timestamp": "2026-09-28T13:05:00Z",
   "source": "prometheus-alertmanager",
   "environment": "production",

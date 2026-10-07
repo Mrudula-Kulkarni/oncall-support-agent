@@ -1,8 +1,9 @@
 {
   "alert_id": "alrt_007",
+  "title": "Users being logged out at random",
   "service_id": "auth-service",
   "type": "error_rate_spike",
-  "message": "Intermittent 401s across all API workers — KeyError raised inside token validation path",
+  "message": "Intermittent 401s across all API workers \u2014 KeyError raised inside token validation path",
   "timestamp": "2026-09-27T22:31:00Z",
   "source": "prometheus-alertmanager",
   "environment": "production",

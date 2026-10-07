@@ -1,8 +1,9 @@
 {
   "alert_id": "alrt_006",
+  "title": "Refunds have stopped processing",
   "service_id": "payment-service",
   "type": "service_down",
-  "message": "refund-worker deployment in CrashLoopBackOff — unhandled requests.HTTPError from ledger-service",
+  "message": "refund-worker deployment in CrashLoopBackOff \u2014 unhandled requests.HTTPError from ledger-service",
   "timestamp": "2026-09-28T03:12:00Z",
   "source": "kubernetes-event-exporter",
   "environment": "production",

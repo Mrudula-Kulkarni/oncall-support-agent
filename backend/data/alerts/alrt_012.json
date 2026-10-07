@@ -1,5 +1,6 @@
 {
   "alert_id": "alrt_012",
+  "title": "Slow notification writes overnight",
   "service_id": "notification-service",
   "type": "latency_spike",
   "message": "Occasional slow writes to notification_status table during nightly digest send",

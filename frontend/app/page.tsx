@@ -12,10 +12,10 @@ import type { Alert, PipelineResult, StepName } from "@/lib/types";
 /** The measured results, from the three eval scripts. Shown because the honest framing — a
  * delta against a no-LLM floor — is more informative than a bare fraction. */
 const METRICS = [
-  { value: "12/12", label: "file located", note: "vs 10/12 no-LLM floor" },
-  { value: "+2", label: "over baseline", note: "both need reasoning" },
-  { value: "12/12", label: "citation precision", note: "right 1 of 3 retrieved" },
-  { value: "4", label: "agents", note: "18 past incidents" },
+  { value: "12/12", label: "found the right file", note: "across 12 test alerts" },
+  { value: "+2", label: "better than a simple search", note: "which gets 10 of 12" },
+  { value: "12/12", label: "cited the right past case", note: "picked from 3 candidates" },
+  { value: "4", label: "agents", note: "18 past incidents to learn from" },
 ];
 
 export default function Dashboard() {

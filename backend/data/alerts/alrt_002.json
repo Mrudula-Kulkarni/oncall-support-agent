@@ -1,5 +1,6 @@
 {
   "alert_id": "alrt_002",
+  "title": "Checkout errors climbing",
   "service_id": "checkout-service",
   "type": "error_rate_spike",
   "message": "Elevated 500s on POST /v1/checkout/session \u2014 AttributeError in billing payload construction",

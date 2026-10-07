@@ -26,6 +26,9 @@ class AlertCategory(str, Enum):
 
 class Alert(BaseModel):
     alert_id: str
+    # A plain-English headline for humans. Deliberately absent from triage.VISIBLE_FIELDS: it is
+    # a UI label, and feeding it to the classifier would change what the eval measures.
+    title: Optional[str] = None
     service_id: str
     type: str
     message: str

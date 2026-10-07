@@ -1,5 +1,6 @@
 {
   "alert_id": "alrt_010",
+  "title": "Reservations broken since the last deploy",
   "service_id": "inventory-service",
   "type": "failed_deploy",
   "message": "KeyError: 'reservation_id' on every reservation request following deploy inv-2026.09.28.1",

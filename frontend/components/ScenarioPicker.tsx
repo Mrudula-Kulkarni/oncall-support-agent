@@ -78,12 +78,17 @@ export function ScenarioPicker({
                 </span>
               </div>
               <p
-                className={`mt-2 line-clamp-2 text-[13px] leading-snug transition-colors ${
+                className={`mt-2 text-[13px] font-medium leading-snug transition-colors ${
                   isSelected ? "text-ink" : "text-ink-dim group-hover:text-ink"
                 }`}
               >
-                {alert.message}
+                {alert.title ?? alert.message}
               </p>
+              {alert.title && (
+                <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-ink-faint">
+                  {alert.message}
+                </p>
+              )}
             </button>
           );
         })}

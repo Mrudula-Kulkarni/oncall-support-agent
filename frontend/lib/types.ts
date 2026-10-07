@@ -14,6 +14,9 @@ export type AlertCategory =
 
 export interface Alert {
   alert_id: string;
+  /** Plain-English headline. The backend keeps it out of the Triage prompt — it is a label for
+   * people, and the mechanism is what the agents are meant to work out. */
+  title?: string | null;
   service_id: string;
   type: AlertCategory;
   message: string;
