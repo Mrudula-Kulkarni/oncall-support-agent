@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
+import { DataSources } from "@/components/DataSources";
 import { Pipeline } from "@/components/Pipeline";
 import { ArrowRight } from "@/components/ui";
 
@@ -86,12 +87,13 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
           <h2 className="text-xl font-semibold tracking-tight text-ink">Demo data</h2>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-2">
-            Diagnosing an incident needs five things together: the alert, the logs around it, the
-            deploy that caused it, the source code, and a write up of a similar past incident.
-            Real companies keep those in five separate systems, and no public dataset joins them.
-            So this runs on a purpose built set where the right answer is already known, which is
-            what makes the results worth checking.
+            Diagnosing one incident needs five different kinds of data, and they have to be about
+            the same incident.
           </p>
+
+          <div className="mt-6">
+            <DataSources />
+          </div>
 
           <dl className="mt-7 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
             {DATA.map((d) => (
@@ -105,11 +107,10 @@ export default function Home() {
             ))}
           </dl>
 
-          <p className="mt-7 max-w-3xl border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
-            Eight bugs were planted in that code on purpose, so the correct file and function is
-            known before any agent runs. Ten of the twelve alerts quote a line of code in the
-            error, which a plain text search can find without any AI at all. The other two name
-            nothing and need the code read. Those are the two worth watching.
+          <p className="mt-7 max-w-3xl text-sm leading-relaxed text-ink-3">
+            Ten of the twelve alerts quote a line of code in the error, which a plain text search
+            finds without any AI. The other two name nothing and need the code read. Those are the
+            two worth watching.
           </p>
         </div>
       </section>
