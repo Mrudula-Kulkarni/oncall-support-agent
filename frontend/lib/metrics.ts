@@ -57,12 +57,12 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     const base =
       "baseline_p99_latency_ms" in metric ? num(take("baseline_p99_latency_ms")) : undefined;
     out.push({
-      label: "p99 latency",
+      label: "Slowest requests",
       value: ms(now),
       baseline: base !== undefined ? `normally ${ms(base)}` : undefined,
       meaning:
         base !== undefined && base > 0
-          ? `${Math.round(now / base)}× the baseline p99`
+          ? `${Math.round(now / base)}× slower than normal for the slowest 1% of requests`
           : undefined,
       severe: base !== undefined && now > base * 3,
     });
@@ -73,20 +73,20 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     memory_used_pct: (v) => ({
       label: "Memory used",
       value: `${num(v).toFixed(0)}%`,
-      meaning: "Of the container memory limit. The pod is OOM-killed at 100%",
+      meaning: "Of the memory it is allowed. At 100% it gets killed and restarted",
       fill: num(v) / 100,
       severe: num(v) > 85,
     }),
     gc_pause_ms_p99: (v) => ({
-      label: "GC pause, p99",
+      label: "Memory cleanup pauses",
       value: ms(num(v)),
-      meaning: "Stop-the-world garbage collection, counted against request latency",
+      meaning: "Time the service spends reclaiming memory instead of serving requests",
       severe: num(v) > 300,
     }),
     minutes_since_deploy: (v) => ({
       label: "Time since deploy",
       value: `${num(v)} min later`,
-      meaning: "A short gap implicates the release rather than a change in load",
+      meaning: "A short gap points at the release rather than at extra traffic",
       severe: num(v) < 30,
     }),
     deploy_id: (v) => ({
@@ -108,47 +108,47 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     db_statement_timeout_count_5m: (v) => ({
       label: "Database queries cut off",
       value: Number(v).toLocaleString(),
-      meaning: "Queries cancelled by the server statement_timeout",
+      meaning: "Queries the database gave up on for taking too long",
       severe: num(v) > 50,
     }),
     restart_count_15m: (v) => ({
       label: "Restarts",
       value: String(v),
-      meaning: "CrashLoopBackOff: the container exits and is restarted repeatedly",
+      meaning: "The service keeps crashing and being restarted",
       severe: num(v) > 3,
     }),
     healthy_pods: (v) => ({
-      label: "Healthy replicas",
+      label: "Copies still running",
       value: String(v),
-      meaning: num(v) === 0 ? "No healthy replicas, so the service is serving nothing" : "Of the replicas expected",
+      meaning: num(v) === 0 ? "None, so the service is handling nothing at all" : "Of the number there should be",
       severe: num(v) === 0,
     }),
     expected_pods: (v) => ({
-      label: "Expected replicas",
+      label: "Copies there should be",
       value: String(v),
     }),
     refund_queue_depth: (v) => ({
-      label: "Refund queue depth",
+      label: "Refunds waiting",
       value: Number(v).toLocaleString(),
       meaning: "Nothing is draining the queue, because no worker is healthy",
       severe: num(v) > 100,
     }),
     unauthorized_responses_5m: (v) => ({
-      label: "Unauthorized responses",
+      label: "Shoppers turned away",
       value: Number(v).toLocaleString(),
-      meaning: "401s in five minutes, many of them on sessions that are actually valid",
+      meaning: "Rejected as not logged in, though many of them were",
       severe: num(v) > 100,
     }),
     oversell_events_1h: (v) => ({
-      label: "Oversell events",
+      label: "Items oversold",
       value: Number(v).toLocaleString(),
-      meaning: "Orders accepted against stock that was not on hand",
+      meaning: "Orders taken for stock that was not actually there",
       severe: num(v) > 10,
     }),
     stale_sku_count: (v) => ({
-      label: "Stale SKUs",
+      label: "Products with the wrong stock level",
       value: Number(v).toLocaleString(),
-      meaning: "SKUs whose on_hand value has stopped being written",
+      meaning: "Their recorded stock level has stopped being updated",
       severe: num(v) > 20,
     }),
     revenue_impact_usd_estimate: (v) => ({

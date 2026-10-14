@@ -40,10 +40,11 @@ export default function Home() {
 
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-2">
                 When a production service breaks, the engineer who gets paged spends the first
-                ten to thirty minutes on{" "}
-                <span className="font-medium text-ink">triage rather than the fix</span>: finding
-                the right logs, working out which deploy caused it, and searching a codebase they
-                may not have written. I built four AI agents that do that in about ten seconds.
+                ten to thirty minutes{" "}
+                <span className="font-medium text-ink">before they can even start fixing it</span>
+                : finding the right logs, working out which release caused it, and searching a
+                codebase they may not have written. I built four AI agents that do that part in
+                about ten seconds.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -110,11 +111,10 @@ export default function Home() {
           </dl>
 
           <p className="mt-7 max-w-3xl text-sm leading-relaxed text-ink-3">
-            Ten of the twelve alerts carry a stack trace naming the failing file, which a plain
-            search over the logs finds without any model at all. The other two carry none: a cache
-            that grows without ever evicting, and an off-by-one that shows up only as
-            <span className="font-mono"> received=500 written=499</span>. Those two are where the
-            agent has to read the code.
+            Ten of the twelve alerts include an error message naming the file that failed, which
+            a plain text search finds without any AI at all. The other two do not: a cache that
+            grows forever without clearing, and a loop that quietly skips one row in every batch.
+            Those two are where the agent has to read the code to work it out.
           </p>
         </div>
       </section>

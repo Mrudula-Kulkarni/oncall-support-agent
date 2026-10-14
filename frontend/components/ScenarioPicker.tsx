@@ -19,11 +19,11 @@ import { SectionLabel } from "./ui";
  */
 
 const SERVICE_BLURB: Record<string, string> = {
-  "checkout-service": "cart state and the checkout flow",
-  "payment-service": "card authorization and refunds",
-  "auth-service": "session token validation",
+  "checkout-service": "the cart and the checkout flow",
+  "payment-service": "card payments and refunds",
+  "auth-service": "keeping shoppers signed in",
   "inventory-service": "stock levels and reservations",
-  "notification-service": "transactional email",
+  "notification-service": "order emails",
 };
 
 export function ScenarioPicker({

@@ -34,8 +34,8 @@ const SOURCES = [
   },
   {
     label: "Past incidents",
-    detail: "Postmortems from similar failures, naming the cause and the change that fixed it.",
-    real: "Confluence, Jira",
+    detail: "Write ups from similar failures, naming the cause and the change that fixed it.",
+    real: "Confluence, Notion",
   },
 ];
 
