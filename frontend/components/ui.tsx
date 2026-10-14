@@ -100,19 +100,29 @@ export function ConfidenceMeter({ value }: { value: number }) {
   );
 }
 
+const CARD_TONES = {
+  plain: "bg-surface border-line",
+  note: "bg-amber-50 border-amber-300",
+  warn: "bg-red-50 border-red-200",
+} as const;
+
 export function Card({
   children,
   className = "",
   active = false,
+  tone = "plain",
 }: {
   children: ReactNode;
   className?: string;
   active?: boolean;
+  /** Background and border together, so a caller cannot half-override one via className and
+   * leave the result depending on stylesheet order. */
+  tone?: keyof typeof CARD_TONES;
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border bg-surface shadow-[0_1px_2px_rgba(28,25,23,0.04),0_8px_24px_-16px_rgba(28,25,23,0.18)] ${
-        active ? "sweep border-indigo-300" : "border-line"
+      className={`relative overflow-hidden rounded-xl border shadow-[0_1px_2px_rgba(28,25,23,0.04),0_8px_24px_-16px_rgba(28,25,23,0.18)] ${
+        active ? "sweep border-indigo-300 bg-surface" : CARD_TONES[tone]
       } ${className}`}
     >
       {children}
@@ -158,7 +168,7 @@ export function Button({
   } as const;
   const variants = {
     primary:
-      "bg-brand text-white shadow-sm hover:bg-brand-deep focus-visible:outline-brand",
+      "bg-stone-900 text-white shadow-sm hover:bg-stone-800 focus-visible:outline-stone-900",
     secondary:
       "bg-surface text-ink ring-1 ring-inset ring-line-strong hover:bg-surface-2 focus-visible:outline-brand",
   } as const;

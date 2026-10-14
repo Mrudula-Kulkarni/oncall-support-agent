@@ -80,12 +80,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen">
-      <Nav cta={false} />
+      <Nav />
 
 
       <div className="mx-auto max-w-[88rem] px-5 py-7 sm:px-8">
         {loadError && (
-          <Card className="mb-6 border-red-200 bg-red-50 p-4">
+          <Card tone="warn" className="mb-6 p-4">
             <p className="text-sm text-red-700">{loadError}</p>
           </Card>
         )}
@@ -119,7 +119,7 @@ export default function Dashboard() {
             )}
 
             {runError && (
-              <Card className="border-red-200 bg-red-50 p-4">
+              <Card tone="warn" className="p-4">
                 <h3 className="text-sm font-semibold text-red-700">The run failed</h3>
                 <p className="mt-1.5 break-words text-sm leading-relaxed text-red-700/75">
                   {runError}

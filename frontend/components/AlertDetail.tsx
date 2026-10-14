@@ -82,13 +82,13 @@ export function AlertDetail({
             className={`shrink-0 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200
               ${
                 running
-                  ? "cursor-not-allowed bg-stone-100 text-ink-3 ring-1 ring-inset ring-line"
-                  : "bg-sky-500 text-slate-950 shadow-[0_0_24px_-6px_rgba(56,189,248,0.7)] hover:bg-sky-400"
+                  ? "cursor-not-allowed bg-stone-100 text-ink-3 ring-1 ring-inset ring-line-strong"
+                  : "bg-stone-900 text-white shadow-sm hover:bg-stone-800"
               }`}
           >
             {running ? (
               <span className="inline-flex items-center gap-2">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-400" />
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-stone-400" />
                 Analysing…
               </span>
             ) : hasRun ? (
@@ -155,8 +155,8 @@ export function AlertDetail({
 
         {!hasRun && !running && (
           <p className="mt-4 text-sm leading-relaxed text-ink-3">
-            Analysing takes roughly 10–40 seconds. Nothing is run against any system — the
-            agents only ever suggest.
+            The four agents read the logs, the recent deploys and the service’s source code,
+            then hand back what they found. It takes about ten seconds.
           </p>
         )}
       </Card>

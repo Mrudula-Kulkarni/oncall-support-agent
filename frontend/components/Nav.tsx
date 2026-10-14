@@ -1,34 +1,59 @@
-import Link from "next/link";
-import { ArrowRight, Button } from "./ui";
+"use client";
 
-/** Shared top bar. The landing page and the demo are separate routes, so there has to be a way
- * back and forth that is not the browser button. */
-export function Nav({ cta = true }: { cta?: boolean }) {
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+/**
+ * Top bar with real tabs.
+ *
+ * The demo used to be reached by a "Try an incident" button, which framed it as an optional
+ * trial rather than half the site. It is a destination, so it gets a tab.
+ */
+
+const TABS = [
+  { href: "/", label: "Overview" },
+  { href: "/incidents", label: "Incidents" },
+];
+
+export function Nav() {
+  const pathname = usePathname();
+
   return (
-    <nav className="sticky top-0 z-20 border-b border-line bg-surface/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-soft ring-1 ring-inset ring-indigo-200">
-            <span className="h-2 w-2 rounded-full bg-brand" />
+    <nav className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center gap-8 px-5 sm:px-8">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5 py-3.5 transition-opacity hover:opacity-80"
+        >
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-stone-900">
+            <span className="h-2 w-2 rounded-full bg-white" />
           </span>
           <span className="text-[15px] font-semibold tracking-tight text-ink">
             On-Call Support Agent
           </span>
         </Link>
 
-        {cta ? (
-          <Button href="/incidents">
-            Try an incident
-            <ArrowRight />
-          </Button>
-        ) : (
-          <Link
-            href="/"
-            className="text-sm font-medium text-ink-2 transition-colors hover:text-ink"
-          >
-            ← How it works
-          </Link>
-        )}
+        <div className="flex items-center gap-1">
+          {TABS.map((tab) => {
+            const active =
+              tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+            return (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                aria-current={active ? "page" : undefined}
+                className={`relative px-3 py-3.5 text-sm font-medium transition-colors ${
+                  active ? "text-ink" : "text-ink-3 hover:text-ink-2"
+                }`}
+              >
+                {tab.label}
+                {active && (
+                  <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-stone-900" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

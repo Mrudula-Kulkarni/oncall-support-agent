@@ -35,7 +35,7 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
   return (
     <div className="rise space-y-5">
       {escalated_to_human && (
-        <Card className="border-amber-200 bg-amber-50 p-4">
+        <Card tone="note" className="p-4">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700 ring-1 ring-amber-600/25">
               !

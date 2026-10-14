@@ -111,17 +111,51 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
       meaning: "Queries the database abandoned for taking too long, in five minutes",
       severe: num(v) > 50,
     }),
-    restart_count: (v) => ({
+    restart_count_15m: (v) => ({
       label: "Restarts",
       value: String(v),
-      meaning: "The service keeps crashing and being restarted",
+      meaning: "The container keeps crashing and being restarted, in fifteen minutes",
       severe: num(v) > 3,
     }),
-    queue_depth: (v) => ({
-      label: "Jobs backed up",
+    healthy_pods: (v) => ({
+      label: "Copies still running",
+      value: String(v),
+      meaning: num(v) === 0 ? "None — the service is completely down" : "Of the number expected",
+      severe: num(v) === 0,
+    }),
+    expected_pods: (v) => ({
+      label: "Copies there should be",
+      value: String(v),
+    }),
+    refund_queue_depth: (v) => ({
+      label: "Refunds waiting",
       value: Number(v).toLocaleString(),
-      meaning: "Waiting work that nothing is processing",
+      meaning: "Piling up because nothing is processing them",
       severe: num(v) > 100,
+    }),
+    unauthorized_responses_5m: (v) => ({
+      label: "Shoppers turned away",
+      value: Number(v).toLocaleString(),
+      meaning: "Requests rejected as logged-out in five minutes, many of them wrongly",
+      severe: num(v) > 100,
+    }),
+    oversell_events_1h: (v) => ({
+      label: "Items oversold",
+      value: Number(v).toLocaleString(),
+      meaning: "Orders taken for stock that was not actually there, in the last hour",
+      severe: num(v) > 10,
+    }),
+    stale_sku_count: (v) => ({
+      label: "Products with wrong stock",
+      value: Number(v).toLocaleString(),
+      meaning: "Their recorded stock level has stopped being updated",
+      severe: num(v) > 20,
+    }),
+    revenue_impact_usd_estimate: (v) => ({
+      label: "Estimated revenue at risk",
+      value: `$${Number(v).toLocaleString()}`,
+      meaning: "Rough value of the orders affected so far",
+      severe: num(v) > 1000,
     }),
   };
 
