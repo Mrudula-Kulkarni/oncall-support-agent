@@ -22,9 +22,8 @@ export function PipelineIntro() {
     <Card className="p-6">
       <h2 className="text-lg font-semibold text-ink">Pick an alert on the left</h2>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">
-        Four agents run in sequence, streamed over server-sent events so each result lands as it
-        completes rather than at the end. Three to four model calls, roughly ten to forty
-        seconds.
+        Four agents run in sequence, and each result appears as it completes rather than all at
+        the end. Three to four model calls, roughly ten to forty seconds.
       </p>
 
       <ol className="mt-6 grid gap-3 sm:grid-cols-2">

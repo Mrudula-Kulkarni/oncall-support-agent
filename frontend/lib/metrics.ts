@@ -102,7 +102,7 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     gateway_timeout_count_5m: (v) => ({
       label: "Card gateway timeouts",
       value: Number(v).toLocaleString(),
-      meaning: "Upstream calls to the card processor that exceeded the client timeout",
+      meaning: "Calls to the card processor that timed out",
       severe: num(v) > 50,
     }),
     db_statement_timeout_count_5m: (v) => ({
@@ -130,13 +130,13 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     refund_queue_depth: (v) => ({
       label: "Refund queue depth",
       value: Number(v).toLocaleString(),
-      meaning: "Unconsumed, because no worker is healthy enough to drain the queue",
+      meaning: "Nothing is draining the queue, because no worker is healthy",
       severe: num(v) > 100,
     }),
     unauthorized_responses_5m: (v) => ({
       label: "Unauthorized responses",
       value: Number(v).toLocaleString(),
-      meaning: "401s returned in five minutes, a share of them on valid sessions",
+      meaning: "401s in five minutes, many of them on sessions that are actually valid",
       severe: num(v) > 100,
     }),
     oversell_events_1h: (v) => ({

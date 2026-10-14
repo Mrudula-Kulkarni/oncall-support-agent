@@ -155,9 +155,9 @@ export function AlertDetail({
 
         {!hasRun && !running && (
           <p className="mt-4 text-sm leading-relaxed text-ink-3">
-            The agents fetch the service&rsquo;s logs and deploy history, search its source, and return
-            a located file, a confidence score and a grounded fix. Three to four model calls,
-            roughly ten seconds.
+            The agents pull the service&rsquo;s logs and deploy history, search its code, and come
+            back with the file at fault, how confident they are, and a fix based on a past
+            incident. Three to four model calls, roughly ten seconds.
           </p>
         )}
       </Card>

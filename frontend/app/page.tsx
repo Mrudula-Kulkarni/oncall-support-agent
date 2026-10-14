@@ -14,9 +14,9 @@ import { ArrowRight } from "@/components/ui";
 
 const DATA = [
   { value: "5", label: "microservices", note: "checkout, payments, auth, inventory, notifications" },
-  { value: "12", label: "Python files", note: "two with no planted bug, so localization is a real choice" },
+  { value: "12", label: "Python files", note: "two with no planted bug, so finding the right one is a real choice" },
   { value: "12", label: "alerts", note: "each with its log window and deploy history" },
-  { value: "18", label: "past incidents", note: "the corpus Remediation retrieves over" },
+  { value: "18", label: "past incidents", note: "the write ups Remediation searches" },
 ];
 
 export default function Home() {
@@ -41,9 +41,9 @@ export default function Home() {
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-2">
                 When a production service breaks, the engineer who gets paged spends the first
                 ten to thirty minutes on{" "}
-                <span className="font-medium text-ink">triage rather than the fix</span>: pulling
-                the right logs, correlating the deploy, and searching an unfamiliar codebase. I
-                built four AI agents that do that in about ten seconds.
+                <span className="font-medium text-ink">triage rather than the fix</span>: finding
+                the right logs, working out which deploy caused it, and searching a codebase they
+                may not have written. I built four AI agents that do that in about ten seconds.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -88,9 +88,9 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
           <h2 className="text-xl font-semibold tracking-tight text-ink">Demo data</h2>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-2">
-            Root-causing one incident needs five kinds of data, all scoped to the same incident
-            and the same time window. Assembling that by hand across five tools is what the first
-            ten minutes of an on-call page actually goes on.
+            Diagnosing one incident needs five kinds of data, all about that same incident and
+            that same time window. Pulling them together by hand, across five tools, is what the
+            first ten minutes of a page actually goes on.
           </p>
 
           <div className="mt-6">
@@ -110,11 +110,11 @@ export default function Home() {
           </dl>
 
           <p className="mt-7 max-w-3xl text-sm leading-relaxed text-ink-3">
-            Ten of the twelve alerts carry a stack trace naming the failing file, which a regex
-            over the logs resolves without any model at all. The other two carry none: an
-            unbounded cache that raises nothing, and an off-by-one visible only as
+            Ten of the twelve alerts carry a stack trace naming the failing file, which a plain
+            search over the logs finds without any model at all. The other two carry none: a cache
+            that grows without ever evicting, and an off-by-one that shows up only as
             <span className="font-mono"> received=500 written=499</span>. Those two are where the
-            agent has to read the source.
+            agent has to read the code.
           </p>
         </div>
       </section>
