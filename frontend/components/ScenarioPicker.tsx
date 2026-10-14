@@ -19,11 +19,11 @@ import { SectionLabel } from "./ui";
  */
 
 const SERVICE_BLURB: Record<string, string> = {
-  "checkout-service": "runs the cart and the checkout flow",
-  "payment-service": "charges cards and processes refunds",
-  "auth-service": "keeps shoppers signed in",
-  "inventory-service": "tracks stock levels and reservations",
-  "notification-service": "sends order emails",
+  "checkout-service": "cart state and the checkout flow",
+  "payment-service": "card authorization and refunds",
+  "auth-service": "session token validation",
+  "inventory-service": "stock levels and reservations",
+  "notification-service": "transactional email",
 };
 
 export function ScenarioPicker({
@@ -56,8 +56,8 @@ export function ScenarioPicker({
       </SectionLabel>
 
       <p className="mb-5 text-sm leading-relaxed text-ink-3">
-        Twelve things that went wrong across the five microservices of a fictional online shop,
-        grouped by which one raised the alert.
+        Twelve incidents across the five microservices of a sample e-commerce stack, grouped by
+        the service that raised the alert.
       </p>
 
       <div className="space-y-6">

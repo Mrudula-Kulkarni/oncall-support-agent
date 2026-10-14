@@ -14,9 +14,9 @@ import { ArrowRight } from "@/components/ui";
 
 const DATA = [
   { value: "5", label: "microservices", note: "checkout, payments, auth, inventory, notifications" },
-  { value: "12", label: "Python files", note: "two deliberately clean, so the choice is real" },
-  { value: "12", label: "alerts", note: "with the logs and deploy history around each one" },
-  { value: "18", label: "past incidents", note: "the write ups the Remediation agent searches" },
+  { value: "12", label: "Python files", note: "two with no planted bug, so localization is a real choice" },
+  { value: "12", label: "alerts", note: "each with its log window and deploy history" },
+  { value: "18", label: "past incidents", note: "the corpus Remediation retrieves over" },
 ];
 
 export default function Home() {
@@ -40,9 +40,10 @@ export default function Home() {
 
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-2">
                 When a production service breaks, the engineer who gets paged spends the first
-                ten to thirty minutes just working out{" "}
-                <span className="font-medium text-ink">what broke and where</span>. I built four
-                AI agents that do that part in about ten seconds.
+                ten to thirty minutes on{" "}
+                <span className="font-medium text-ink">triage rather than the fix</span>: pulling
+                the right logs, correlating the deploy, and searching an unfamiliar codebase. I
+                built four AI agents that do that in about ten seconds.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -65,7 +66,7 @@ export default function Home() {
                 >
                   <span>
                     <span className="block text-base font-semibold">See the demo data</span>
-                    <span className="block text-sm text-ink-3">and why it is synthesized</span>
+                    <span className="block text-sm text-ink-3">and why it is synthetic</span>
                   </span>
                 </a>
               </div>
@@ -87,9 +88,9 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
           <h2 className="text-xl font-semibold tracking-tight text-ink">Demo data</h2>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-2">
-            Diagnosing one incident needs five different kinds of data, and they all have to be
-            about the same incident. That is the part a real on-call engineer spends their first
-            ten minutes assembling by hand, across five different tools.
+            Root-causing one incident needs five kinds of data, all scoped to the same incident
+            and the same time window. Assembling that by hand across five tools is what the first
+            ten minutes of an on-call page actually goes on.
           </p>
 
           <div className="mt-6">
@@ -109,9 +110,11 @@ export default function Home() {
           </dl>
 
           <p className="mt-7 max-w-3xl text-sm leading-relaxed text-ink-3">
-            Ten of the twelve alerts quote a line of code in the error, which a plain text search
-            finds without any AI. The other two name nothing and need the code read. Those are the
-            two worth watching.
+            Ten of the twelve alerts carry a stack trace naming the failing file, which a regex
+            over the logs resolves without any model at all. The other two carry none: an
+            unbounded cache that raises nothing, and an off-by-one visible only as
+            <span className="font-mono"> received=500 written=499</span>. Those two are where the
+            agent has to read the source.
           </p>
         </div>
       </section>

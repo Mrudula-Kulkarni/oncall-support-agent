@@ -57,12 +57,12 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     const base =
       "baseline_p99_latency_ms" in metric ? num(take("baseline_p99_latency_ms")) : undefined;
     out.push({
-      label: "Slowest requests",
+      label: "p99 latency",
       value: ms(now),
       baseline: base !== undefined ? `normally ${ms(base)}` : undefined,
       meaning:
         base !== undefined && base > 0
-          ? `${Math.round(now / base)}× slower than usual for the worst 1% of requests`
+          ? `${Math.round(now / base)}× the baseline p99`
           : undefined,
       severe: base !== undefined && now > base * 3,
     });
@@ -73,28 +73,28 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     memory_used_pct: (v) => ({
       label: "Memory used",
       value: `${num(v).toFixed(0)}%`,
-      meaning: "Of the container's limit — it is killed when this reaches 100%",
+      meaning: "Of the container memory limit. The pod is OOM-killed at 100%",
       fill: num(v) / 100,
       severe: num(v) > 85,
     }),
     gc_pause_ms_p99: (v) => ({
-      label: "Garbage-collection pauses",
+      label: "GC pause, p99",
       value: ms(num(v)),
-      meaning: "Time the service spends frozen reclaiming memory, instead of serving",
+      meaning: "Stop-the-world garbage collection, counted against request latency",
       severe: num(v) > 300,
     }),
     minutes_since_deploy: (v) => ({
-      label: "Started after a deploy",
+      label: "Time since deploy",
       value: `${num(v)} min later`,
-      meaning: "Short gaps point at the release rather than at load",
+      meaning: "A short gap implicates the release rather than a change in load",
       severe: num(v) < 30,
     }),
     deploy_id: (v) => ({
-      label: "The release in question",
+      label: "Deploy",
       value: String(v),
     }),
     affected_requests_5m: (v) => ({
-      label: "Customers hit",
+      label: "Affected requests",
       value: Number(v).toLocaleString(),
       meaning: "Requests affected in the last five minutes",
       severe: num(v) > 500,
@@ -102,59 +102,59 @@ export function readableMetrics(metric: Record<string, string | number>): Readab
     gateway_timeout_count_5m: (v) => ({
       label: "Card gateway timeouts",
       value: Number(v).toLocaleString(),
-      meaning: "Calls to the card processor that never answered, in five minutes",
+      meaning: "Upstream calls to the card processor that exceeded the client timeout",
       severe: num(v) > 50,
     }),
     db_statement_timeout_count_5m: (v) => ({
       label: "Database queries cut off",
       value: Number(v).toLocaleString(),
-      meaning: "Queries the database abandoned for taking too long, in five minutes",
+      meaning: "Queries cancelled by the server statement_timeout",
       severe: num(v) > 50,
     }),
     restart_count_15m: (v) => ({
       label: "Restarts",
       value: String(v),
-      meaning: "The container keeps crashing and being restarted, in fifteen minutes",
+      meaning: "CrashLoopBackOff: the container exits and is restarted repeatedly",
       severe: num(v) > 3,
     }),
     healthy_pods: (v) => ({
-      label: "Copies still running",
+      label: "Healthy replicas",
       value: String(v),
-      meaning: num(v) === 0 ? "None — the service is completely down" : "Of the number expected",
+      meaning: num(v) === 0 ? "No healthy replicas, so the service is serving nothing" : "Of the replicas expected",
       severe: num(v) === 0,
     }),
     expected_pods: (v) => ({
-      label: "Copies there should be",
+      label: "Expected replicas",
       value: String(v),
     }),
     refund_queue_depth: (v) => ({
-      label: "Refunds waiting",
+      label: "Refund queue depth",
       value: Number(v).toLocaleString(),
-      meaning: "Piling up because nothing is processing them",
+      meaning: "Unconsumed, because no worker is healthy enough to drain the queue",
       severe: num(v) > 100,
     }),
     unauthorized_responses_5m: (v) => ({
-      label: "Shoppers turned away",
+      label: "Unauthorized responses",
       value: Number(v).toLocaleString(),
-      meaning: "Requests rejected as logged-out in five minutes, many of them wrongly",
+      meaning: "401s returned in five minutes, a share of them on valid sessions",
       severe: num(v) > 100,
     }),
     oversell_events_1h: (v) => ({
-      label: "Items oversold",
+      label: "Oversell events",
       value: Number(v).toLocaleString(),
-      meaning: "Orders taken for stock that was not actually there, in the last hour",
+      meaning: "Orders accepted against stock that was not on hand",
       severe: num(v) > 10,
     }),
     stale_sku_count: (v) => ({
-      label: "Products with wrong stock",
+      label: "Stale SKUs",
       value: Number(v).toLocaleString(),
-      meaning: "Their recorded stock level has stopped being updated",
+      meaning: "SKUs whose on_hand value has stopped being written",
       severe: num(v) > 20,
     }),
     revenue_impact_usd_estimate: (v) => ({
       label: "Estimated revenue at risk",
       value: `$${Number(v).toLocaleString()}`,
-      meaning: "Rough value of the orders affected so far",
+      meaning: "Estimated value of the affected orders",
       severe: num(v) > 1000,
     }),
   };

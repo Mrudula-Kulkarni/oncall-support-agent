@@ -14,27 +14,27 @@
 const SOURCES = [
   {
     label: "The alert",
-    detail: "The warning that woke someone up. Which service, what went wrong, and the numbers behind it.",
+    detail: "The firing alert: service, condition, and the metric values that crossed the threshold.",
     real: "Datadog, PagerDuty",
   },
   {
     label: "Logs",
-    detail: "Everything the service wrote down around the time it broke. The error is in there, buried in thousands of ordinary lines.",
+    detail: "Log lines around the incident window, stack traces included, interleaved with unrelated traffic from the same service.",
     real: "Splunk, Loki",
   },
   {
     label: "Deploys",
-    detail: "A list of recent releases and the files each one changed. Often the cause is in the last one, but not always.",
+    detail: "Recent releases with their timestamps and changed files. The introducing deploy is not always the most recent one.",
     real: "ArgoCD, GitHub",
   },
   {
     label: "Source code",
-    detail: "The actual code, so a hunch can be checked by reading it rather than guessing.",
+    detail: "The service's files, so a hypothesis can be confirmed against the implementation rather than inferred from a trace.",
     real: "the monorepo",
   },
   {
     label: "Past incidents",
-    detail: "Notes from the last time something like this happened, and what fixed it then.",
+    detail: "Postmortems naming a prior root cause and the change that resolved it.",
     real: "Confluence, Jira",
   },
 ];
@@ -63,11 +63,11 @@ export function DataSources() {
       </ul>
 
       <p className="border-t border-line bg-canvas px-5 py-4 text-sm leading-relaxed text-ink-2">
-        A real company holds those in five separate systems and nobody exports the join, so no
-        public dataset has all five for the same incident.{" "}
-        <span className="font-medium text-ink">This one does</span>, and because every bug in it
-        was planted deliberately, the right answer is known before any agent runs. That is what
-        makes the results checkable rather than asserted.
+        These live in five separate systems at a real company and nothing exports the join, so no
+        public dataset carries all five for the same incident.{" "}
+        <span className="font-medium text-ink">This corpus does</span>, and because every bug in
+        it was planted deliberately, the ground truth is known before any agent runs. That is
+        what makes the localization accuracy measurable rather than asserted.
       </p>
     </div>
   );
