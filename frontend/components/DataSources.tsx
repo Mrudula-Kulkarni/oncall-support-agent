@@ -14,27 +14,27 @@
 const SOURCES = [
   {
     label: "The alert",
-    detail: "What fired, when, and the numbers that came with it.",
+    detail: "The warning that woke someone up. Which service, what went wrong, and the numbers behind it.",
     real: "Datadog, PagerDuty",
   },
   {
     label: "Logs",
-    detail: "The minutes either side of it, stack traces included, mixed in with everything else the service was doing.",
+    detail: "Everything the service wrote down around the time it broke. The error is in there, buried in thousands of ordinary lines.",
     real: "Splunk, Loki",
   },
   {
     label: "Deploys",
-    detail: "What shipped recently, and which files each release touched.",
+    detail: "A list of recent releases and the files each one changed. Often the cause is in the last one, but not always.",
     real: "ArgoCD, GitHub",
   },
   {
     label: "Source code",
-    detail: "The service's own files, so a suspected cause can be confirmed by reading it.",
+    detail: "The actual code, so a hunch can be checked by reading it rather than guessing.",
     real: "the monorepo",
   },
   {
     label: "Past incidents",
-    detail: "Write ups of what went wrong before, and what actually fixed it.",
+    detail: "Notes from the last time something like this happened, and what fixed it then.",
     real: "Confluence, Jira",
   },
 ];
