@@ -60,6 +60,10 @@ export default function Home() {
                 <h2 className="text-xl font-semibold tracking-tight text-ink">
                   Watch it work on something broken
                 </h2>
+                <p className="mt-2 max-w-lg text-sm leading-relaxed text-ink-2">
+                  Twelve incidents across five microservices. Each takes about ten seconds, and
+                  every agent reports back as it finishes rather than all at the end.
+                </p>
                 <Link
                   href="/incidents"
                   className="group mt-4 inline-flex items-center justify-between gap-6 rounded-xl bg-brand px-6 py-4 text-white transition-colors hover:bg-brand-deep"
