@@ -24,8 +24,8 @@ import { Card, CategoryBadge, SectionLabel, SeverityBadge } from "./ui";
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-[10px] uppercase tracking-wider text-ink-faint">{label}</dt>
-      <dd className="mt-0.5 truncate text-xs text-ink-dim">{value}</dd>
+      <dt className="text-sm uppercase tracking-wider text-ink-3">{label}</dt>
+      <dd className="mt-0.5 truncate text-sm text-ink-2">{value}</dd>
     </div>
   );
 }
@@ -71,7 +71,7 @@ export function AlertDetail({
               <div className="mt-2.5 flex flex-wrap items-center gap-2">
                 <SeverityBadge severity={triage.severity} />
                 <CategoryBadge category={triage.category} />
-                <span className="text-[11px] text-ink-faint">— decided by Triage</span>
+                <span className="text-sm text-ink-3">— decided by Triage</span>
               </div>
             )}
           </div>
@@ -79,10 +79,10 @@ export function AlertDetail({
           <button
             onClick={onRun}
             disabled={running}
-            className={`shrink-0 rounded-lg px-4 py-2.5 text-[13px] font-semibold transition-all duration-200
+            className={`shrink-0 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200
               ${
                 running
-                  ? "cursor-not-allowed bg-white/[0.04] text-ink-faint ring-1 ring-inset ring-line"
+                  ? "cursor-not-allowed bg-stone-100 text-ink-3 ring-1 ring-inset ring-line"
                   : "bg-sky-500 text-slate-950 shadow-[0_0_24px_-6px_rgba(56,189,248,0.7)] hover:bg-sky-400"
               }`}
           >
@@ -105,22 +105,22 @@ export function AlertDetail({
             {metrics.map((m) => (
               <div key={m.label} className="min-w-0">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-[11px] uppercase tracking-wider text-ink-faint">
+                  <span className="text-sm uppercase tracking-wider text-ink-3">
                     {m.label}
                   </span>
                   {m.baseline && (
-                    <span className="text-[11px] text-ink-faint">({m.baseline})</span>
+                    <span className="text-sm text-ink-3">({m.baseline})</span>
                   )}
                 </div>
                 <p
                   className={`mt-0.5 font-mono text-lg font-semibold tabular-nums ${
-                    m.severe ? "text-rose-300" : "text-ink"
+                    m.severe ? "text-red-600" : "text-ink"
                   }`}
                 >
                   {m.value}
                 </p>
                 {m.fill !== undefined && (
-                  <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-stone-100">
                     <div
                       className={`h-full rounded-full ${m.severe ? "bg-rose-400" : "bg-sky-400"}`}
                       style={{ width: `${Math.min(100, Math.round(m.fill * 100))}%` }}
@@ -128,7 +128,7 @@ export function AlertDetail({
                   </div>
                 )}
                 {m.meaning && (
-                  <p className="mt-1 text-[11px] leading-relaxed text-ink-faint">{m.meaning}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-ink-3">{m.meaning}</p>
                 )}
               </div>
             ))}
@@ -144,17 +144,17 @@ export function AlertDetail({
         </dl>
 
         <details className="mt-4 group">
-          <summary className="cursor-pointer list-none text-[11px] text-ink-faint transition-colors hover:text-ink-dim">
+          <summary className="cursor-pointer list-none text-sm text-ink-3 transition-colors hover:text-ink-2">
             <span className="group-open:hidden">▸ Show the raw alert text</span>
             <span className="hidden group-open:inline">▾ Hide the raw alert text</span>
           </summary>
-          <p className="mt-2 border-l-2 border-line py-0.5 pl-3 font-mono text-[11px] leading-relaxed text-ink-faint">
+          <p className="mt-2 border-l-2 border-line py-0.5 pl-3 font-mono text-sm leading-relaxed text-ink-3">
             {alert.message}
           </p>
         </details>
 
         {!hasRun && !running && (
-          <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
+          <p className="mt-4 text-sm leading-relaxed text-ink-3">
             Analysing takes roughly 10–40 seconds. Nothing is run against any system — the
             agents only ever suggest.
           </p>

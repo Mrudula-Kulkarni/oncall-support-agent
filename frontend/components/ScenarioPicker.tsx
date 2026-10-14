@@ -55,13 +55,13 @@ export function ScenarioPicker({
     <div>
       <SectionLabel
         right={
-          <span className="font-mono text-[11px] text-ink-faint">{scenarios.length} alerts</span>
+          <span className="font-mono text-sm text-ink-3">{scenarios.length} alerts</span>
         }
       >
         Pick an alert
       </SectionLabel>
 
-      <p className="mb-4 text-[11px] leading-relaxed text-ink-faint">
+      <p className="mb-4 text-sm leading-relaxed text-ink-3">
         Twelve things that went wrong at a made-up online shop, grouped by which part of it
         broke.
       </p>
@@ -73,10 +73,10 @@ export function ScenarioPicker({
             <div key={service}>
               <div className="mb-2 flex items-baseline gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${accent}`} />
-                <h3 className="text-[12px] font-semibold text-ink">
+                <h3 className="text-sm font-semibold text-ink">
                   {service.replace("-service", "")}
                 </h3>
-                <span className="truncate text-[11px] text-ink-faint">
+                <span className="truncate text-sm text-ink-3">
                   {SERVICE_BLURB[service] ?? ""}
                 </span>
               </div>
@@ -93,8 +93,8 @@ export function ScenarioPicker({
                       className={`group relative w-full overflow-hidden rounded-lg border p-3 pl-4 text-left transition-all duration-200
                         ${
                           isSelected
-                            ? "border-sky-500/40 bg-sky-500/[0.07] shadow-[0_0_0_1px_rgba(56,189,248,0.15)]"
-                            : "border-line bg-surface/50 hover:border-line-bright hover:bg-surface-2/70"
+                            ? "border-indigo-400 bg-brand-soft shadow-[0_0_0_1px_rgba(56,189,248,0.15)]"
+                            : "border-line bg-surface hover:border-line-strong hover:bg-surface-2"
                         }
                         disabled:cursor-not-allowed disabled:opacity-40`}
                     >
@@ -104,8 +104,8 @@ export function ScenarioPicker({
                         } transition-opacity`}
                       />
                       <p
-                        className={`text-[13px] font-medium leading-snug transition-colors ${
-                          isSelected ? "text-ink" : "text-ink-dim group-hover:text-ink"
+                        className={`text-sm font-medium leading-snug transition-colors ${
+                          isSelected ? "text-ink" : "text-ink-2 group-hover:text-ink"
                         }`}
                       >
                         {alert.title ?? alert.message}

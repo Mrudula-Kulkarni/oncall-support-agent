@@ -1,106 +1,54 @@
-import { Card, SectionLabel } from "./ui";
+import Link from "next/link";
+import { Card } from "./ui";
 
 /**
- * Shown before a scenario is picked, where the result panel will later sit.
+ * Shown before an alert is picked.
  *
- * It earns the space: the landing view is otherwise an empty column next to a list of alerts,
- * and someone arriving cold has no idea what four agents means or why there is a branch in the
- * middle. This says it in the shape of the thing itself.
+ * Deliberately short. The landing page explains the four agents and the data in full, so
+ * repeating it here would be the same text twice for anyone who arrived that way — and this
+ * page's job is to get someone running something, not to re-teach the system. Enough context
+ * for a visitor who landed here directly, and a link for the rest.
  */
 
-const STAGES = [
-  {
-    n: "1",
-    name: "Triage",
-    detail: "Decides how serious it is and what kind of failure it is, from the symptoms alone.",
-    accent: "text-sky-300 ring-sky-500/30 bg-sky-500/10",
-  },
-  {
-    n: "2",
-    name: "Investigator",
-    detail:
-      "Reads the logs and recent deploys, narrows down which files could be at fault, then reads their code to find the actual cause — and says how confident it is.",
-    accent: "text-violet-300 ring-violet-500/30 bg-violet-500/10",
-  },
-  {
-    n: "3",
-    name: "Remediation",
-    detail:
-      "Finds similar incidents the team has fixed before and suggests a fix based on what worked, saying which ones it used.",
-    accent: "text-emerald-300 ring-emerald-500/30 bg-emerald-500/10",
-  },
-  {
-    n: "4",
-    name: "Reporter",
-    detail: "Writes the short summary an on-call engineer would actually paste into Slack.",
-    accent: "text-amber-300 ring-amber-400/30 bg-amber-400/10",
-  },
+const STEPS = [
+  { n: 1, name: "Triage", line: "how bad, and what kind of failure", tint: "bg-sky-50 text-sky-700 ring-sky-600/20" },
+  { n: 2, name: "Investigator", line: "which file and function broke", tint: "bg-violet-50 text-violet-700 ring-violet-600/20" },
+  { n: 3, name: "Remediation", line: "how to fix it, citing a past incident", tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20" },
+  { n: 4, name: "Reporter", line: "the summary to paste into Slack", tint: "bg-amber-50 text-amber-700 ring-amber-600/20" },
 ];
 
 export function PipelineIntro() {
   return (
-    <div className="space-y-6">
-      <Card className="p-7">
-        <p className="text-center text-sm text-ink-dim">Pick an alert on the left to analyse it.</p>
-        <p className="mx-auto mt-2 max-w-lg text-center text-xs leading-relaxed text-ink-faint">
-          Each one takes roughly 10&ndash;40 seconds. You will see each agent report back as it
-          finishes, rather than waiting for the whole thing.
-        </p>
-      </Card>
+    <Card className="p-6">
+      <h2 className="text-lg font-semibold text-ink">Pick an alert on the left</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">
+        Four agents work through it in turn. Each reports back as it finishes, so you watch the
+        reasoning rather than a spinner — the whole thing takes roughly ten to forty seconds.
+      </p>
 
-      <section>
-        <SectionLabel>How it works</SectionLabel>
-        <Card className="p-5">
-          <ol className="space-y-4">
-            {STAGES.map((stage, index) => (
-              <li key={stage.name}>
-                <div className="flex gap-3.5">
-                  <span
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-[11px] ring-1 ring-inset ${stage.accent}`}
-                  >
-                    {stage.n}
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-[13px] font-semibold text-ink">{stage.name}</h3>
-                    <p className="mt-0.5 text-xs leading-relaxed text-ink-faint">
-                      {stage.detail}
-                    </p>
-                  </div>
-                </div>
+      <ol className="mt-6 grid gap-3 sm:grid-cols-2">
+        {STEPS.map((step) => (
+          <li key={step.name} className="flex items-center gap-3">
+            <span
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-semibold ring-1 ring-inset ${step.tint}`}
+            >
+              {step.n}
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-ink">{step.name}</p>
+              <p className="truncate text-sm text-ink-3">{step.line}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
 
-                {/* The §4.2 branch, drawn where it actually happens. */}
-                {index === 1 && (
-                  <div className="ml-3 mt-3 border-l border-dashed border-line pl-6">
-                    <p className="text-xs leading-relaxed text-ink-faint">
-                      <span className="font-medium text-amber-300">
-                        If confidence is below 0.50
-                      </span>{" "}
-                      it stops and hands the incident to a human rather than suggesting a fix.
-                      A confident-sounding suggestion built on weak evidence is worse than no
-                      suggestion at all.
-                    </p>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ol>
-
-          <div className="mt-5 grid gap-3 border-t border-line pt-4 sm:grid-cols-3">
-            {[
-              ["Repo search", "Direct file search, not a protocol layer — it would add a dependency without adding capability."],
-              ["MCP tools", "Logs, deploys and runbooks sit behind an MCP server, because several agents share them."],
-              ["Retrieval", "Chroma over 18 past incidents, embedded locally so a public demo costs nothing per click."],
-            ].map(([title, body]) => (
-              <div key={title}>
-                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-ink-dim">
-                  {title}
-                </h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-ink-faint">{body}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </section>
-    </div>
+      <p className="mt-6 border-t border-line pt-4 text-sm text-ink-3">
+        If the Investigator is less than 50% confident, the run stops and hands the incident to a
+        human rather than suggesting a fix.{" "}
+        <Link href="/" className="font-medium text-brand hover:text-brand-deep">
+          More on how it works →
+        </Link>
+      </p>
+    </Card>
   );
 }

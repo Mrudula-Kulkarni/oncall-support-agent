@@ -2,103 +2,142 @@
 @plugin "@tailwindcss/typography";
 
 /**
- * Dark-first, because this is an on-call console and that is the genre convention — Datadog,
- * Sentry, Grafana. It also lets severity colour carry real signal instead of competing with a
- * white page.
+ * Light theme, indigo on a faintly warm off-white.
+ *
+ * The earlier dark console looked the part but assumed a reader who already lives in these
+ * tools. A landing page has to work for someone arriving cold, and light reads as approachable
+ * where dark reads as specialist. Severity keeps conventional red/amber/green — that is one
+ * place where being unconventional costs comprehension.
+ *
+ * Type is a step larger than before throughout: the previous 11px secondary text was legible
+ * but tiring, and nothing on this page benefits from being small.
  */
 
 @theme {
-  --color-base: #070b14;
-  --color-surface: #0d1320;
-  --color-surface-2: #131b2c;
-  --color-line: #1e2a42;
-  --color-line-bright: #2b3a58;
+  --color-canvas: #faf9f8;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f5f4;
+  --color-line: #e7e5e4;
+  --color-line-strong: #d6d3d1;
 
-  --color-ink: #e8edf7;
-  --color-ink-dim: #9aa8c4;
-  --color-ink-faint: #64748b;
+  --color-ink: #1c1917;
+  --color-ink-2: #57534e;
+  --color-ink-3: #8a8581;
 
-  --color-accent: #38bdf8;
-  --color-accent-deep: #0ea5e9;
+  --color-brand: #4f46e5;
+  --color-brand-deep: #4338ca;
+  --color-brand-soft: #eef2ff;
 
-  --color-crit: #f43f5e;
-  --color-high: #fb923c;
-  --color-med: #fbbf24;
-  --color-low: #64748b;
-  --color-ok: #34d399;
+  --color-crit: #d92d20;
+  --color-high: #dc6803;
+  --color-med: #ca8504;
+  --color-low: #79716b;
+  --color-ok: #079455;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, "SF Mono", monospace;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background: var(--color-base);
+  background: var(--color-canvas);
   color: var(--color-ink);
-  /* Two soft pools of light so the page has depth instead of reading as a flat slab. */
-  background-image:
-    radial-gradient(60rem 40rem at 12% -10%, rgba(56, 189, 248, 0.07), transparent 60%),
-    radial-gradient(50rem 34rem at 92% 0%, rgba(168, 85, 247, 0.05), transparent 55%);
-  background-attachment: fixed;
 }
 
-/* A hairline grid in the header, very low contrast — texture, not decoration you notice. */
+/* Soft indigo wash behind the landing hero — depth without a gradient that shouts. */
+.hero-wash {
+  background-image:
+    radial-gradient(44rem 30rem at 15% -8%, rgba(79, 70, 229, 0.08), transparent 62%),
+    radial-gradient(38rem 26rem at 88% 4%, rgba(13, 148, 136, 0.06), transparent 58%);
+}
+
 .grid-texture {
   background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
-  background-size: 2.25rem 2.25rem;
+    linear-gradient(to right, rgba(28, 25, 23, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(28, 25, 23, 0.035) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
 }
+
+/* --- motion ------------------------------------------------------------------------- */
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.rise { animation: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.d1 { animation-delay: 0.08s; }
+.d2 { animation-delay: 0.16s; }
+.d3 { animation-delay: 0.24s; }
+.d4 { animation-delay: 0.32s; }
 
 @keyframes sweep {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(300%); }
 }
-/* Runs along the top of an in-flight card so "working" is visible at a glance. */
 .sweep::after {
   content: "";
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
-  block-size: 1px;
-  inline-size: 33%;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  block-size: 2px;
+  inline-size: 30%;
+  background: linear-gradient(90deg, transparent, var(--color-brand), transparent);
   animation: sweep 1.8s ease-in-out infinite;
 }
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
+/* The landing animation: each stage of the pipeline lights up in turn, loops. */
+@keyframes stage {
+  0%, 12% { opacity: 0.35; transform: scale(0.97); }
+  18%, 36% { opacity: 1; transform: scale(1); }
+  46%, 100% { opacity: 0.55; transform: scale(1); }
 }
-.rise {
-  animation: rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+.stage-1 { animation: stage 6s ease-in-out infinite; }
+.stage-2 { animation: stage 6s ease-in-out infinite 0.9s; }
+.stage-3 { animation: stage 6s ease-in-out infinite 1.8s; }
+.stage-4 { animation: stage 6s ease-in-out infinite 2.7s; }
+
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
+.flow-line {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-line-strong) 0 46%,
+    var(--color-brand) 50%,
+    var(--color-line-strong) 54% 100%
+  );
+  background-size: 200% 100%;
+  animation: flow 6s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  70% { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+.pulse-ring { animation: pulse-ring 2s ease-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .sweep::after,
-  .rise {
+  .rise, .sweep::after, .flow-line, .pulse-ring,
+  .stage-1, .stage-2, .stage-3, .stage-4 {
     animation: none;
   }
+  .stage-1, .stage-2, .stage-3, .stage-4 { opacity: 1; }
 }
 
-::selection {
-  background: rgba(56, 189, 248, 0.28);
-}
+::selection { background: rgba(79, 70, 229, 0.18); }
 
-/* Scrollbars, so long code blocks do not punch a bright hole in a dark page. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-line-bright) transparent;
+  scrollbar-color: var(--color-line-strong) transparent;
 }
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
+*::-webkit-scrollbar { width: 11px; height: 11px; }
 *::-webkit-scrollbar-thumb {
-  background: var(--color-line-bright);
+  background: var(--color-line-strong);
   border-radius: 9999px;
   border: 3px solid transparent;
   background-clip: content-box;

@@ -50,7 +50,7 @@ function Marker({ state }: { state: StepState }) {
         className="flex h-3 w-3 items-center justify-center rounded-full bg-emerald-400/15 ring-1 ring-emerald-400/50"
         aria-label="done"
       >
-        <svg viewBox="0 0 10 10" className="h-2 w-2 text-emerald-300" aria-hidden>
+        <svg viewBox="0 0 10 10" className="h-2 w-2 text-emerald-700" aria-hidden>
           <path
             d="M1.5 5.2 3.8 7.5 8.5 2.8"
             fill="none"
@@ -72,7 +72,7 @@ function Marker({ state }: { state: StepState }) {
     );
   }
   return (
-    <span className="h-3 w-3 rounded-full bg-white/[0.06] ring-1 ring-line" aria-label="pending" />
+    <span className="h-3 w-3 rounded-full bg-stone-100 ring-1 ring-line" aria-label="pending" />
   );
 }
 
@@ -97,7 +97,7 @@ export function ReasoningTrail({
     <div>
       <SectionLabel
         right={
-          <span className="font-mono text-[11px] tabular-nums text-ink-faint">
+          <span className="font-mono text-sm tabular-nums text-ink-3">
             {result.duration_ms != null
               ? `${(result.duration_ms / 1000).toFixed(1)}s`
               : `${doneCount}/${STEPS.length}`}
@@ -130,13 +130,13 @@ export function ReasoningTrail({
               <div className={`min-w-0 flex-1 ${last ? "pb-0" : "pb-6"}`}>
                 <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
                   <h3
-                    className={`text-sm font-semibold ${dim ? "text-ink-faint" : "text-ink"}`}
+                    className={`text-sm font-semibold ${dim ? "text-ink-3" : "text-ink"}`}
                   >
                     {step.title}
                   </h3>
-                  <span className="text-[11px] text-ink-faint">{step.blurb}</span>
+                  <span className="text-sm text-ink-3">{step.blurb}</span>
                   {state === "skipped" && (
-                    <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[11px] font-medium text-amber-300 ring-1 ring-inset ring-amber-400/25">
+                    <span className="rounded bg-amber-50 px-1.5 py-0.5 text-sm font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
                       skipped — handed to a human
                     </span>
                   )}
@@ -144,19 +144,19 @@ export function ReasoningTrail({
 
                 <div className="mt-2 text-sm">
                   {step.node === "triage" && result.triage && (
-                    <p className="rise text-ink-dim">{result.triage.short_reason}</p>
+                    <p className="rise text-ink-2">{result.triage.short_reason}</p>
                   )}
 
                   {step.node === "investigate" && result.investigation && (
                     <div className="rise space-y-3">
-                      <p className="text-ink-dim">{result.investigation.hypothesis}</p>
+                      <p className="text-ink-2">{result.investigation.hypothesis}</p>
                       <ConfidenceMeter value={result.investigation.confidence} />
                       {result.investigation.evidence.length > 0 && (
                         <ul className="space-y-1.5">
                           {result.investigation.evidence.map((item, i) => (
                             <li
                               key={i}
-                              className="rounded-md border-l-2 border-sky-500/30 bg-white/[0.02] py-1.5 pl-2.5 pr-2 font-mono text-[11px] leading-relaxed text-ink-faint"
+                              className="rounded-md border-l-2 border-indigo-300 bg-stone-100 py-1.5 pl-2.5 pr-2 font-mono text-sm leading-relaxed text-ink-3"
                             >
                               {item}
                             </li>
@@ -167,9 +167,9 @@ export function ReasoningTrail({
                   )}
 
                   {step.node === "remediate" && result.remediation && (
-                    <p className="rise text-ink-dim">
+                    <p className="rise text-ink-2">
                       Fix proposed, grounded in{" "}
-                      <span className="text-emerald-300">
+                      <span className="text-emerald-700">
                         {result.remediation.referenced_incidents.length || "no"}
                       </span>{" "}
                       past incident
@@ -178,10 +178,10 @@ export function ReasoningTrail({
                   )}
 
                   {step.node === "report" && result.report && (
-                    <p className="rise text-ink-dim">Summary ready.</p>
+                    <p className="rise text-ink-2">Summary ready.</p>
                   )}
 
-                  {dim && <p className="text-ink-faint/60">waiting</p>}
+                  {dim && <p className="text-ink-3">waiting</p>}
                 </div>
               </div>
             </li>
@@ -191,10 +191,10 @@ export function ReasoningTrail({
 
       {showLocated && result.investigation?.suspected_file && (
         <div className="rise mt-5 flex flex-wrap items-center gap-2 border-t border-line pt-4">
-          <span className="text-[11px] uppercase tracking-wider text-ink-faint">cause</span>
-          <Mono tone="accent">{result.investigation.suspected_file}</Mono>
+          <span className="text-sm uppercase tracking-wider text-ink-3">cause</span>
+          <Mono tone="brand">{result.investigation.suspected_file}</Mono>
           {result.investigation.suspected_function && (
-            <Mono tone="accent">{result.investigation.suspected_function}()</Mono>
+            <Mono tone="brand">{result.investigation.suspected_function}()</Mono>
           )}
         </div>
       )}
