@@ -25,7 +25,7 @@ export function Nav() {
           href="/"
           className="flex shrink-0 items-center gap-2.5 py-3.5 transition-opacity hover:opacity-80"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-stone-900">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand">
             <span className="h-2 w-2 rounded-full bg-white" />
           </span>
           <span className="text-[15px] font-semibold tracking-tight text-ink">
@@ -48,7 +48,7 @@ export function Nav() {
               >
                 {tab.label}
                 {active && (
-                  <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-stone-900" />
+                  <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand" />
                 )}
               </Link>
             );

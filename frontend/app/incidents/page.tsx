@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Accuracy } from "@/components/Accuracy";
 import { AlertDetail } from "@/components/AlertDetail";
 import { FinalPanel } from "@/components/FinalPanel";
@@ -12,7 +13,10 @@ import { Card } from "@/components/ui";
 import { API_URL, fetchScenarios, streamRun } from "@/lib/api";
 import type { Alert, PipelineResult, StepName } from "@/lib/types";
 
-export default function Dashboard() {
+function Dashboard() {
+  // ?alert=alrt_003 — lets the landing page link straight to one incident, so "see it work"
+  // can be a real example rather than a generic button.
+  const requested = useSearchParams().get("alert");
   const [scenarios, setScenarios] = useState<Alert[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -24,7 +28,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchScenarios()
-      .then(setScenarios)
+      .then((loaded) => {
+        setScenarios(loaded);
+        if (requested && loaded.some((a) => a.alert_id === requested)) {
+          setSelected(requested);
+        }
+      })
       .catch((error: Error) =>
         setLoadError(
           `Could not reach the backend at ${API_URL}. Start it with ` +
@@ -32,7 +41,7 @@ export default function Dashboard() {
         ),
       );
     return () => abortRef.current?.abort();
-  }, []);
+  }, [requested]);
 
   /** Picking a scenario only shows it. Running is a deliberate second step — an exploratory
    * click should not spend three LLM calls, and the rate limit is tight. */
@@ -149,5 +158,13 @@ export default function Dashboard() {
 
       </div>
     </div>
+  );
+}
+
+export default function IncidentsPage() {
+  return (
+    <Suspense fallback={null}>
+      <Dashboard />
+    </Suspense>
   );
 }

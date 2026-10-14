@@ -78,7 +78,7 @@ export function ScenarioPicker({
                     className={`w-full rounded-lg border p-3 text-left text-sm font-medium leading-snug transition-all duration-150
                       ${
                         isSelected
-                          ? "border-stone-900 bg-stone-900 text-white"
+                          ? "border-brand bg-brand text-white"
                           : "border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink"
                       }
                       disabled:cursor-not-allowed disabled:opacity-40`}

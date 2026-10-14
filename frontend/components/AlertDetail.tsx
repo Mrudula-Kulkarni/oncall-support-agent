@@ -83,12 +83,12 @@ export function AlertDetail({
               ${
                 running
                   ? "cursor-not-allowed bg-stone-100 text-ink-3 ring-1 ring-inset ring-line-strong"
-                  : "bg-stone-900 text-white shadow-sm hover:bg-stone-800"
+                  : "bg-brand text-white shadow-sm hover:bg-brand-deep"
               }`}
           >
             {running ? (
               <span className="inline-flex items-center gap-2">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-stone-400" />
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white/70" />
                 Analysing…
               </span>
             ) : hasRun ? (

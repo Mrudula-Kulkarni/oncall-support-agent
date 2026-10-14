@@ -168,7 +168,7 @@ export function Button({
   } as const;
   const variants = {
     primary:
-      "bg-stone-900 text-white shadow-sm hover:bg-stone-800 focus-visible:outline-stone-900",
+      "bg-brand text-white shadow-sm hover:bg-brand-deep focus-visible:outline-brand",
     secondary:
       "bg-surface text-ink ring-1 ring-inset ring-line-strong hover:bg-surface-2 focus-visible:outline-brand",
   } as const;

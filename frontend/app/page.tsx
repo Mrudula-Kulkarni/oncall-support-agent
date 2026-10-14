@@ -1,75 +1,40 @@
+import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { PipelineAnimation } from "@/components/PipelineAnimation";
-import { ArrowRight, Button, Card } from "@/components/ui";
+import { ArrowRight, Card } from "@/components/ui";
 
 /**
  * Landing page.
  *
- * The demo used to be the only page, so someone arriving cold met a list of alerts and had to
- * infer the point. This explains the problem, what was built, what data it runs on and why that
- * matters, then hands off to /incidents.
+ * Deliberately short. An earlier version explained everything twice over and the reader had to
+ * wade; the demo is the thing worth reaching, so each section says its piece once and gets out
+ * of the way.
+ *
+ * It opens incidents by naming three real ones rather than offering a generic button. A link
+ * reading "Refunds have stopped processing" tells you what you are about to see; "View the
+ * incidents" tells you nothing, and reads like a trial.
  */
 
-
-
 const AGENTS = [
-  {
-    n: 1,
-    name: "Triage",
-    job: "Decides how serious it is and what kind of failure it is, from the symptoms alone.",
-    detail:
-      "One AI call, no tools. It never sees the answer — the alert's own category label is withheld, so the classification is real rather than a lookup.",
-    tint: "bg-sky-50 text-sky-700 ring-sky-600/20",
-  },
-  {
-    n: 2,
-    name: "Investigator",
-    job: "Finds the file and function at fault, and says how confident it is.",
-    detail:
-      "Reads the logs and recent deploys, narrows the candidates, then reads their source to confirm the mechanism actually produces the symptom.",
-    tint: "bg-violet-50 text-violet-700 ring-violet-600/20",
-  },
-  {
-    n: 3,
-    name: "Remediation",
-    job: "Suggests a fix, based on how the team fixed something similar before.",
-    detail:
-      "Searches past incident write-ups and must cite the ones it used. A citation naming something it did not retrieve is dropped automatically.",
-    tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-  },
-  {
-    n: 4,
-    name: "Reporter",
-    job: "Writes the short summary an on-call engineer would paste into Slack.",
-    detail:
-      "Only reports what the earlier agents found. If nothing was located it says so, rather than hedging into an implied diagnosis.",
-    tint: "bg-amber-50 text-amber-700 ring-amber-600/20",
-  },
+  { n: 1, name: "Triage", line: "How serious, and what kind of failure — from the symptoms alone.", tint: "bg-sky-50 text-sky-700 ring-sky-600/20" },
+  { n: 2, name: "Investigator", line: "Reads the logs, deploys and source to name the file at fault, with a confidence score.", tint: "bg-violet-50 text-violet-700 ring-violet-600/20" },
+  { n: 3, name: "Remediation", line: "Suggests a fix, citing the past incident it learned from.", tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20" },
+  { n: 4, name: "Reporter", line: "Writes the summary an on-call engineer would paste into Slack.", tint: "bg-amber-50 text-amber-700 ring-amber-600/20" },
+];
+
+/** Three with visibly different shapes — a crash, a slow leak, a bad release. */
+const FEATURED = [
+  { id: "alrt_006", title: "Refunds have stopped processing", service: "payment-service", hint: "every copy of the service is crash-looping" },
+  { id: "alrt_003", title: "Checkout slow, memory filling up", service: "checkout-service", hint: "no error, no stack trace — needs the code read" },
+  { id: "alrt_010", title: "Reservations broken since the last deploy", service: "inventory-service", hint: "started six minutes after a release" },
 ];
 
 const DATA = [
-  {
-    value: "5",
-    label: "microservices",
-    note: "A fictional online shop: checkout, payments, auth, inventory and notifications — 12 Python files, including two with no bug in them so locating the right one is a real choice.",
-  },
-  {
-    value: "8",
-    label: "planted bugs",
-    note: "A missing null check, a cache that never evicts, an off-by-one in a batch loop, a dropped retry decorator, a race condition, a renamed API field, and two more.",
-  },
-  {
-    value: "12",
-    label: "alerts",
-    note: "With the logs and deploy history around each one. Four bugs get a second alert at a different volume, so severity has something to vary across.",
-  },
-  {
-    value: "18",
-    label: "past incidents",
-    note: "Write-ups the Remediation agent searches. Eight mirror the planted bugs; ten are near-misses that share a category or service but not the cause.",
-  },
+  { value: "5", label: "microservices", note: "checkout, payments, auth, inventory, notifications" },
+  { value: "8", label: "planted bugs", note: "across 12 Python files, two of them deliberately clean" },
+  { value: "12", label: "alerts", note: "with the logs and deploy history around each" },
+  { value: "18", label: "past incidents", note: "the write-ups Remediation searches" },
 ];
-
 
 export default function Home() {
   return (
@@ -78,10 +43,10 @@ export default function Home() {
 
       {/* -------------------------------------------------------------- hero */}
       <section className="hero-wash border-b border-line">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+          <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
             <div className="rise">
-              <span className="inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-[13px] font-medium text-brand-deep ring-1 ring-inset ring-indigo-200">
+              <span className="inline-flex items-center gap-2 rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand-deep ring-1 ring-inset ring-indigo-200">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                 Four AI agents, one incident
               </span>
@@ -93,138 +58,138 @@ export default function Home() {
               <p className="mt-5 text-lg leading-relaxed text-ink-2">
                 When a production service breaks, the engineer who gets paged spends the first
                 ten to thirty minutes not fixing anything — just working out{" "}
-                <span className="font-medium text-ink">what broke and where</span>.
-              </p>
-              <p className="mt-3 text-lg leading-relaxed text-ink-2">
-                This does that part in about ten seconds, and tells you how confident it is.
+                <span className="font-medium text-ink">what broke and where</span>. This does
+                that part in about ten seconds, and tells you how confident it is.
               </p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Button href="/incidents" size="lg">
-                  View the incidents
+              <div className="mt-8">
+                <p className="text-sm font-medium text-ink-2">Start with one of these</p>
+                <div className="mt-3 space-y-2">
+                  {FEATURED.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/incidents?alert=${item.id}`}
+                      className="group flex items-center gap-4 rounded-xl border border-line bg-surface p-4 transition-all hover:border-brand hover:shadow-[0_1px_2px_rgba(79,70,229,0.08),0_8px_24px_-16px_rgba(79,70,229,0.4)]"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-ink">{item.title}</p>
+                        <p className="mt-0.5 text-sm text-ink-3">
+                          <span className="font-mono">{item.service}</span> · {item.hint}
+                        </p>
+                      </div>
+                      <span className="shrink-0 text-ink-3 transition-all group-hover:translate-x-0.5 group-hover:text-brand">
+                        <ArrowRight />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+                <Link
+                  href="/incidents"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-brand transition-colors hover:text-brand-deep"
+                >
+                  Or browse all twelve
                   <ArrowRight />
-                </Button>
-                <Button href="#how" variant="secondary" size="lg">
-                  How it works
-                </Button>
+                </Link>
               </div>
-
-              <p className="mt-5 text-[13px] text-ink-3">
-                It only ever suggests. Nothing is run against any system.
-              </p>
             </div>
 
-            <div className="rise d2">
+            <div className="rise d2 lg:pt-4">
               <PipelineAnimation />
+              <p className="mt-3 text-sm text-ink-3">
+                It only ever suggests. Nothing is run against any system.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------ agents */}
-      <section id="how" className="scroll-mt-8 border-b border-line">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-            The four agents
-          </h2>
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-2">
-            Each does one narrow job and hands on. Narrow agents are easier to evaluate and fix
-            in isolation than one large prompt, and the split mirrors how incident response is
-            actually divided.
-          </p>
-
-          <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            {AGENTS.map((agent) => (
-              <Card key={agent.name} className="p-6">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold ring-1 ring-inset ${agent.tint}`}
-                  >
-                    {agent.n}
-                  </span>
-                  <h3 className="text-base font-semibold text-ink">{agent.name}</h3>
-                </div>
-                <p className="mt-3.5 text-sm leading-relaxed text-ink">{agent.job}</p>
-                <p className="mt-2 text-[13px] leading-relaxed text-ink-3">{agent.detail}</p>
-              </Card>
-            ))}
+      <section className="border-b border-line bg-surface">
+        <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="text-xl font-semibold tracking-tight text-ink">The four agents</h2>
+            <p className="text-sm text-ink-3">
+              Narrow agents are easier to evaluate and fix than one large prompt.
+            </p>
           </div>
 
-          <Card tone="note" className="mt-5 p-6">
-            <h3 className="text-base font-semibold text-ink">
-              And a decision point in the middle
-            </h3>
-            <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-ink-2">
-              If the Investigator is less than 50% confident, the run stops and hands the
-              incident to a human instead of suggesting a fix. A confident-sounding suggestion
-              built on weak evidence is worse than no suggestion — because it gets acted on.
-            </p>
-          </Card>
+          <ol className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+            {AGENTS.map((agent) => (
+              <li key={agent.name}>
+                <div className="flex items-center gap-2.5">
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-lg text-sm font-semibold ring-1 ring-inset ${agent.tint}`}>
+                    {agent.n}
+                  </span>
+                  <h3 className="text-sm font-semibold text-ink">{agent.name}</h3>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-ink-2">{agent.line}</p>
+              </li>
+            ))}
+          </ol>
+
+          <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
+            <span className="font-medium text-ink">If the Investigator is under 50% confident</span>
+            , the run stops and hands the incident to a human instead of suggesting a fix — a
+            confident-sounding suggestion built on weak evidence is worse than none, because it
+            gets acted on.
+          </p>
         </div>
       </section>
 
       {/* -------------------------------------------------------------- data */}
-      <section className="border-b border-line bg-surface">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-            The data is synthesized
-          </h2>
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-2">
+      <section className="border-b border-line">
+        <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
+          <h2 className="text-xl font-semibold tracking-tight text-ink">Demo data</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-2">
             Diagnosing an incident needs five things joined together: the alert, the logs around
             it, the deploy that caused it, the source code, and a write-up of a similar past
-            incident. Real companies keep those in five separate systems, and no public dataset
-            joins them. So all of it was written by hand for this project.
+            incident. Real companies keep those in five separate systems and no public dataset
+            joins them — so this runs on a purpose-built set instead, where the correct answer is
+            known before the agent starts.
           </p>
 
-          <div className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_1fr]">
-            <Card className="p-6">
-              <h3 className="text-base font-semibold text-ink">What was built</h3>
-              <dl className="mt-4 divide-y divide-line">
-                {DATA.map((d) => (
-                  <div key={d.label} className="flex gap-5 py-3 first:pt-0 last:pb-0">
-                    <dt className="w-36 shrink-0 font-mono text-sm font-semibold text-ink">
-                      {d.value} {d.label}
-                    </dt>
-                    <dd className="text-sm leading-relaxed text-ink-2">{d.note}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Card>
-
-            <Card className="p-6">
-              <h3 className="text-base font-semibold text-ink">Why that makes it measurable</h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-2">
-                Each alert was written around a bug planted deliberately, so the correct answer
-                is known before the agent runs. The accuracy figures are checkable rather than
-                asserted.
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-ink-2">
-                It also let the difficulty be set on purpose. Ten of the twelve alerts quote a
-                line of code in the error, so a plain text search finds the file with no AI at
-                all. The other two name nothing and need the code read — those are the ones worth
-                watching.
-              </p>
-            </Card>
-          </div>
+          <dl className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+            {DATA.map((d) => (
+              <div key={d.label}>
+                <dt className="font-mono text-2xl font-semibold tabular-nums text-brand">
+                  {d.value}
+                </dt>
+                <dd className="mt-0.5 text-sm font-medium text-ink">{d.label}</dd>
+                <dd className="mt-0.5 text-sm leading-relaxed text-ink-3">{d.note}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
       {/* --------------------------------------------------------------- cta */}
       <section>
-        <div className="mx-auto max-w-6xl px-5 py-16 text-center sm:px-8 sm:py-20">
-          <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-            See it work on a real incident
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-ink-2">
-            Twelve incidents across five microservices. Each takes about ten seconds, and you
-            watch each agent report back as it finishes.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <Button href="/incidents" size="lg">
-              View the incidents
-              <ArrowRight />
-            </Button>
-          </div>
+        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+          <Card>
+            <div className="grid items-center gap-6 p-8 sm:grid-cols-[1.4fr_1fr] sm:p-10">
+              <div>
+                <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+                  Watch it work on something broken
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-ink-2">
+                  Twelve incidents across five microservices. Each takes about ten seconds, and
+                  every agent reports back as it finishes rather than at the end.
+                </p>
+              </div>
+              <Link
+                href="/incidents"
+                className="group inline-flex items-center justify-between gap-4 rounded-xl bg-brand px-5 py-4 text-white transition-colors hover:bg-brand-deep sm:justify-self-end"
+              >
+                <span>
+                  <span className="block text-base font-semibold">Go to incidents</span>
+                  <span className="block text-sm text-indigo-200">12 across 5 services</span>
+                </span>
+                <span className="transition-transform group-hover:translate-x-0.5">
+                  <ArrowRight />
+                </span>
+              </Link>
+            </div>
+          </Card>
         </div>
       </section>
     </div>
