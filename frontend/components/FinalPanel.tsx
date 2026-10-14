@@ -6,7 +6,7 @@ import { Card, Mono, SectionLabel } from "./ui";
 
 /**
  * The final panel (spec §7): located file and function, the suggested fix, the past incidents
- * it was grounded in — or the needs-human-review state.
+ * the past incidents it drew on — or the needs-human-review state.
  *
  * Escalation is a first-class outcome, not an error. A low-confidence run is the pipeline
  * working correctly: spec §4.2 says a fix built on a hypothesis the system does not believe is
@@ -43,11 +43,11 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
             <div>
               <h3 className="text-sm font-semibold text-amber-200">Needs human review</h3>
               <p className="mt-1 text-[13px] leading-relaxed text-amber-200/70">
-                Confidence came back at{" "}
+                The agents were only{" "}
                 <span className="font-mono">
                   {investigation?.confidence.toFixed(2) ?? "—"}
                 </span>
-                , below the 0.50 threshold, so no fix was proposed. A suggestion built on a
+                 confident — below the 0.50 cut-off — so no fix was suggested. A suggestion built on a
                 hypothesis the pipeline does not believe would read as authoritative without
                 being reliable.
               </p>
@@ -58,7 +58,7 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
 
       {investigation?.suspected_file && (
         <section>
-          <SectionLabel>Located</SectionLabel>
+          <SectionLabel>Where it comes from</SectionLabel>
           <Card className="p-4">
             <div className="flex flex-wrap items-center gap-2">
               <Mono tone="accent">{investigation.suspected_file}</Mono>
@@ -77,7 +77,7 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
         <section>
           <SectionLabel
             right={
-              <span className="text-[11px] text-ink-faint">suggestion only — not executed</span>
+              <span className="text-[11px] text-ink-faint">a suggestion — nothing is run</span>
             }
           >
             Suggested fix
@@ -89,8 +89,8 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-3">
               <span className="text-[11px] uppercase tracking-wider text-ink-faint">
                 {remediation.referenced_incidents.length > 0
-                  ? "grounded in"
-                  : "not grounded in a retrieved incident"}
+                  ? "based on past incident"
+                  : "no similar past incident was found"}
               </span>
               {remediation.referenced_incidents.map((id) => (
                 <span
@@ -107,7 +107,7 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
 
       {report && (
         <section>
-          <SectionLabel>Incident summary</SectionLabel>
+          <SectionLabel>Summary for the team</SectionLabel>
           <Card className="p-4">
             <div className={PROSE}>
               <Markdown>{report.summary_markdown}</Markdown>

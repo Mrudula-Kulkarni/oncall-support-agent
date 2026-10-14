@@ -95,8 +95,8 @@ export function ScenarioPicker({
       </div>
 
       <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
-        Preset scenarios only — no free-text input, so the demo stays reliable and its API cost
-        is bounded.
+        Twelve preset alerts, no free-text input — so the demo stays reliable and costs nothing
+        unexpected to run.
       </p>
     </div>
   );

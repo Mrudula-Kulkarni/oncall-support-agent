@@ -99,12 +99,12 @@ export function AlertDetail({
             {running ? (
               <span className="inline-flex items-center gap-2">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-400" />
-                Running…
+                Analysing…
               </span>
             ) : hasRun ? (
-              "Run again"
+              "Analyse again"
             ) : (
-              "Run the pipeline"
+              "Analyse this alert"
             )}
           </button>
         </div>
@@ -127,8 +127,8 @@ export function AlertDetail({
 
         {!hasRun && !running && (
           <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
-            Running makes three to four LLM calls and takes roughly 10–40 seconds. Nothing is
-            executed against any system — the pipeline only ever suggests.
+            This makes three to four AI calls and takes roughly 10–40 seconds. Nothing is run
+            against any system — the agents only ever suggest.
           </p>
         )}
       </Card>

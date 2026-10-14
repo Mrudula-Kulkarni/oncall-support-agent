@@ -12,27 +12,27 @@ const STAGES = [
   {
     n: "1",
     name: "Triage",
-    detail: "Classifies severity and category from the symptoms. One call, no tools.",
+    detail: "Decides how serious it is and what kind of failure it is, from the symptoms alone.",
     accent: "text-sky-300 ring-sky-500/30 bg-sky-500/10",
   },
   {
     n: "2",
     name: "Investigator",
     detail:
-      "Reads logs and deploy history, ranks candidate files, and reads their source to find the mechanism. Returns a confidence score.",
+      "Reads the logs and recent deploys, narrows down which files could be at fault, then reads their code to find the actual cause — and says how confident it is.",
     accent: "text-violet-300 ring-violet-500/30 bg-violet-500/10",
   },
   {
     n: "3",
     name: "Remediation",
     detail:
-      "Retrieves similar past incidents and proposes a fix grounded in what resolved them, citing which ones.",
+      "Finds similar incidents the team has fixed before and suggests a fix based on what worked, saying which ones it used.",
     accent: "text-emerald-300 ring-emerald-500/30 bg-emerald-500/10",
   },
   {
     n: "4",
     name: "Reporter",
-    detail: "Writes the plain-English summary an on-call engineer actually reads.",
+    detail: "Writes the short summary an on-call engineer would actually paste into Slack.",
     accent: "text-amber-300 ring-amber-400/30 bg-amber-400/10",
   },
 ];
@@ -41,10 +41,10 @@ export function PipelineIntro() {
   return (
     <div className="space-y-6">
       <Card className="p-7">
-        <p className="text-center text-sm text-ink-dim">Pick a scenario to run the pipeline.</p>
+        <p className="text-center text-sm text-ink-dim">Pick an alert on the left to analyse it.</p>
         <p className="mx-auto mt-2 max-w-lg text-center text-xs leading-relaxed text-ink-faint">
-          Each run makes three to four LLM calls and takes roughly 10&ndash;40 seconds. The trail
-          fills in as each agent finishes, rather than waiting for the whole run.
+          Each one takes roughly 10&ndash;40 seconds. You will see each agent report back as it
+          finishes, rather than waiting for the whole thing.
         </p>
       </Card>
 
@@ -75,9 +75,9 @@ export function PipelineIntro() {
                       <span className="font-medium text-amber-300">
                         If confidence is below 0.50
                       </span>{" "}
-                      the run escalates to a human and remediation is skipped — a fix built on a
-                      hypothesis the pipeline does not believe reads as authoritative without
-                      being reliable.
+                      it stops and hands the incident to a human rather than suggesting a fix.
+                      A confident-sounding suggestion built on weak evidence is worse than no
+                      suggestion at all.
                     </p>
                   </div>
                 )}

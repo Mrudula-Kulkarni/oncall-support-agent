@@ -103,12 +103,23 @@ export default function Dashboard() {
                   demo
                 </span>
               </div>
-              <p className="mt-2.5 text-[13px] leading-relaxed text-ink-dim">
-                Four agents take a production alert and return what broke, where in the code it
-                originates, and a fix grounded in similar past incidents. Everything they see is
-                controlled sample data, and the system only ever suggests —{" "}
-                <span className="text-ink">nothing is executed</span>.
-              </p>
+
+              <div className="mt-3 space-y-2 text-[13px] leading-relaxed">
+                <p className="text-ink-dim">
+                  <span className="font-medium text-ink">The problem.</span> When a service
+                  breaks at 3am, the engineer who gets paged spends the first 10&ndash;30 minutes
+                  not fixing anything. They are finding the right logs, working out which deploy
+                  caused it, searching a codebase they may not have written, and trying to
+                  remember whether this happened before.
+                </p>
+                <p className="text-ink-dim">
+                  <span className="font-medium text-ink">What this does.</span> It handles that
+                  first part. Pick an alert and four AI agents work through it in about ten
+                  seconds &mdash; what broke, which file and function caused it, and a fix based
+                  on how the team solved similar incidents before. It only ever{" "}
+                  <span className="text-ink">suggests</span>; nothing is run against any system.
+                </p>
+              </div>
             </div>
 
             <dl className="grid grid-cols-2 gap-x-7 gap-y-3 sm:grid-cols-4">

@@ -14,10 +14,10 @@ import { ConfidenceMeter, Mono, SectionLabel } from "./ui";
 type StepState = "pending" | "running" | "done" | "skipped";
 
 const STEPS: { node: StepName; title: string; blurb: string }[] = [
-  { node: "triage", title: "Triage", blurb: "classify severity and category" },
-  { node: "investigate", title: "Investigator", blurb: "locate the responsible code" },
-  { node: "remediate", title: "Remediation", blurb: "propose a fix from past incidents" },
-  { node: "report", title: "Reporter", blurb: "write the incident summary" },
+  { node: "triage", title: "Triage", blurb: "how bad is it, and what kind of failure" },
+  { node: "investigate", title: "Investigator", blurb: "find the code that caused it" },
+  { node: "remediate", title: "Remediation", blurb: "suggest a fix, based on past incidents" },
+  { node: "report", title: "Reporter", blurb: "write it up for the on-call engineer" },
 ];
 
 function stateOf(
@@ -104,7 +104,7 @@ export function ReasoningTrail({
           </span>
         }
       >
-        Reasoning trail
+        What the agents found
       </SectionLabel>
 
       <ol>
@@ -137,7 +137,7 @@ export function ReasoningTrail({
                   <span className="text-[11px] text-ink-faint">{step.blurb}</span>
                   {state === "skipped" && (
                     <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[11px] font-medium text-amber-300 ring-1 ring-inset ring-amber-400/25">
-                      skipped — escalated
+                      skipped — handed to a human
                     </span>
                   )}
                 </div>
@@ -191,7 +191,7 @@ export function ReasoningTrail({
 
       {showLocated && result.investigation?.suspected_file && (
         <div className="rise mt-5 flex flex-wrap items-center gap-2 border-t border-line pt-4">
-          <span className="text-[11px] uppercase tracking-wider text-ink-faint">located</span>
+          <span className="text-[11px] uppercase tracking-wider text-ink-faint">cause</span>
           <Mono tone="accent">{result.investigation.suspected_file}</Mono>
           {result.investigation.suspected_function && (
             <Mono tone="accent">{result.investigation.suspected_function}()</Mono>
