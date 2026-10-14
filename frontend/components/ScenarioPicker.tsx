@@ -1,25 +1,35 @@
 "use client";
 
 import type { Alert } from "@/lib/types";
-import { CATEGORY, Mono, SectionLabel } from "./ui";
+import { SectionLabel } from "./ui";
 
 /**
- * Preset scenarios only, per spec §7 — no free-text input, which keeps a public demo reliable
+ * Twelve preset alerts, per spec §7 — no free-text input, which keeps a public demo reliable
  * and its cost bounded.
  *
- * The alert's `type` is deliberately NOT shown. It holds the category Triage is being asked to
- * classify, so displaying it next to Triage's answer would make the classification look like a
- * lookup. The backend withholds the same field from the prompt for the same reason — which is
- * also why the coloured bar on each card is keyed to the service, not the category.
+ * Grouped under a named service heading rather than listed flat with a coloured bar. The colour
+ * was carrying the grouping on its own, which made it look like it encoded severity or urgency
+ * while in fact encoding nothing a reader could see. A heading says what the colour means.
+ *
+ * The alert's `type` is deliberately not shown. It holds the category Triage is being asked to
+ * classify, so displaying it would make the classification look like a lookup.
  */
 
-/** Stable per-service accent, so the eye groups the twelve scenarios by the five services. */
-const SERVICE_BAR: Record<string, string> = {
+const SERVICE_ACCENT: Record<string, string> = {
   "checkout-service": "bg-sky-400",
   "payment-service": "bg-emerald-400",
   "auth-service": "bg-violet-400",
   "inventory-service": "bg-amber-400",
   "notification-service": "bg-pink-400",
+};
+
+/** What each service is for — the names alone assume you already know the system. */
+const SERVICE_BLURB: Record<string, string> = {
+  "checkout-service": "the cart and checkout flow",
+  "payment-service": "card payments and refunds",
+  "auth-service": "keeping shoppers logged in",
+  "inventory-service": "stock levels and reservations",
+  "notification-service": "order emails",
 };
 
 export function ScenarioPicker({
@@ -33,73 +43,81 @@ export function ScenarioPicker({
   running: boolean;
   onSelect: (alertId: string) => void;
 }) {
-  const services = new Set(scenarios.map((s) => s.service_id));
+  // Preserve the order services first appear in, so the list is stable across renders.
+  const grouped: { service: string; alerts: Alert[] }[] = [];
+  for (const alert of scenarios) {
+    const existing = grouped.find((g) => g.service === alert.service_id);
+    if (existing) existing.alerts.push(alert);
+    else grouped.push({ service: alert.service_id, alerts: [alert] });
+  }
 
   return (
     <div>
       <SectionLabel
         right={
-          <span className="font-mono text-[11px] text-ink-faint">
-            {scenarios.length} / {services.size} services
-          </span>
+          <span className="font-mono text-[11px] text-ink-faint">{scenarios.length} alerts</span>
         }
       >
-        Scenarios
+        Pick an alert
       </SectionLabel>
 
-      <div className="space-y-1.5">
-        {scenarios.map((alert) => {
-          const isSelected = alert.alert_id === selected;
-          const bar = SERVICE_BAR[alert.service_id] ?? "bg-slate-500";
+      <p className="mb-4 text-[11px] leading-relaxed text-ink-faint">
+        Twelve things that went wrong at a made-up online shop, grouped by which part of it
+        broke.
+      </p>
+
+      <div className="space-y-5">
+        {grouped.map(({ service, alerts }) => {
+          const accent = SERVICE_ACCENT[service] ?? "bg-slate-500";
           return (
-            <button
-              key={alert.alert_id}
-              onClick={() => onSelect(alert.alert_id)}
-              disabled={running}
-              aria-current={isSelected}
-              className={`group relative w-full overflow-hidden rounded-lg border p-3 pl-4 text-left transition-all duration-200
-                ${
-                  isSelected
-                    ? "border-sky-500/40 bg-sky-500/[0.07] shadow-[0_0_0_1px_rgba(56,189,248,0.15)]"
-                    : "border-line bg-surface/50 hover:border-line-bright hover:bg-surface-2/70"
-                }
-                disabled:cursor-not-allowed disabled:opacity-40`}
-            >
-              {/* service accent rail */}
-              <span
-                className={`absolute inset-y-0 left-0 w-[3px] ${bar} ${
-                  isSelected ? "opacity-100" : "opacity-45 group-hover:opacity-80"
-                } transition-opacity`}
-              />
-              <div className="flex items-center justify-between gap-2">
-                <Mono tone={isSelected ? "accent" : "default"}>{alert.alert_id}</Mono>
-                <span className="truncate font-mono text-[11px] text-ink-faint">
-                  {alert.service_id.replace("-service", "")}
+            <div key={service}>
+              <div className="mb-2 flex items-baseline gap-2">
+                <span className={`h-2 w-2 shrink-0 rounded-full ${accent}`} />
+                <h3 className="text-[12px] font-semibold text-ink">
+                  {service.replace("-service", "")}
+                </h3>
+                <span className="truncate text-[11px] text-ink-faint">
+                  {SERVICE_BLURB[service] ?? ""}
                 </span>
               </div>
-              <p
-                className={`mt-2 text-[13px] font-medium leading-snug transition-colors ${
-                  isSelected ? "text-ink" : "text-ink-dim group-hover:text-ink"
-                }`}
-              >
-                {alert.title ?? alert.message}
-              </p>
-              {alert.title && (
-                <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-ink-faint">
-                  {alert.message}
-                </p>
-              )}
-            </button>
+
+              <div className="space-y-1.5">
+                {alerts.map((alert) => {
+                  const isSelected = alert.alert_id === selected;
+                  return (
+                    <button
+                      key={alert.alert_id}
+                      onClick={() => onSelect(alert.alert_id)}
+                      disabled={running}
+                      aria-current={isSelected}
+                      className={`group relative w-full overflow-hidden rounded-lg border p-3 pl-4 text-left transition-all duration-200
+                        ${
+                          isSelected
+                            ? "border-sky-500/40 bg-sky-500/[0.07] shadow-[0_0_0_1px_rgba(56,189,248,0.15)]"
+                            : "border-line bg-surface/50 hover:border-line-bright hover:bg-surface-2/70"
+                        }
+                        disabled:cursor-not-allowed disabled:opacity-40`}
+                    >
+                      <span
+                        className={`absolute inset-y-0 left-0 w-[3px] ${accent} ${
+                          isSelected ? "opacity-100" : "opacity-40 group-hover:opacity-80"
+                        } transition-opacity`}
+                      />
+                      <p
+                        className={`text-[13px] font-medium leading-snug transition-colors ${
+                          isSelected ? "text-ink" : "text-ink-dim group-hover:text-ink"
+                        }`}
+                      >
+                        {alert.title ?? alert.message}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           );
         })}
       </div>
-
-      <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
-        Twelve preset alerts, no free-text input — so the demo stays reliable and costs nothing
-        unexpected to run.
-      </p>
     </div>
   );
 }
-
-export { CATEGORY };

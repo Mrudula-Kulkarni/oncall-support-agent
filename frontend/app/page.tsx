@@ -1,23 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Accuracy } from "@/components/Accuracy";
 import { AlertDetail } from "@/components/AlertDetail";
 import { FinalPanel } from "@/components/FinalPanel";
+import { Hero } from "@/components/Hero";
 import { ReasoningTrail } from "@/components/ReasoningTrail";
 import { PipelineIntro } from "@/components/PipelineIntro";
 import { ScenarioPicker } from "@/components/ScenarioPicker";
 import { Card } from "@/components/ui";
 import { API_URL, fetchScenarios, streamRun } from "@/lib/api";
 import type { Alert, PipelineResult, StepName } from "@/lib/types";
-
-/** The measured results, from the three eval scripts. Shown because the honest framing — a
- * delta against a no-LLM floor — is more informative than a bare fraction. */
-const METRICS = [
-  { value: "12/12", label: "found the right file", note: "across 12 test alerts" },
-  { value: "+2", label: "better than a simple search", note: "which gets 10 of 12" },
-  { value: "12/12", label: "cited the right past case", note: "picked from 3 candidates" },
-  { value: "4", label: "agents", note: "18 past incidents to learn from" },
-];
 
 export default function Dashboard() {
   const [scenarios, setScenarios] = useState<Alert[]>([]);
@@ -87,55 +80,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen">
-      {/* header */}
-      <header className="grid-texture border-b border-line bg-surface/40">
-        <div className="mx-auto max-w-[88rem] px-5 py-7 sm:px-8">
-          <div className="flex flex-wrap items-start justify-between gap-6">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/15 ring-1 ring-sky-500/30">
-                  <span className="h-2 w-2 rounded-full bg-sky-400 shadow-[0_0_10px_2px_rgba(56,189,248,0.6)]" />
-                </span>
-                <h1 className="text-[17px] font-semibold tracking-tight text-ink">
-                  On-Call Support Agent
-                </h1>
-                <span className="rounded-md bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-faint ring-1 ring-inset ring-line">
-                  demo
-                </span>
-              </div>
+      <Hero />
 
-              <div className="mt-3 space-y-2 text-[13px] leading-relaxed">
-                <p className="text-ink-dim">
-                  <span className="font-medium text-ink">The problem.</span> When a service
-                  breaks at 3am, the engineer who gets paged spends the first 10&ndash;30 minutes
-                  not fixing anything. They are finding the right logs, working out which deploy
-                  caused it, searching a codebase they may not have written, and trying to
-                  remember whether this happened before.
-                </p>
-                <p className="text-ink-dim">
-                  <span className="font-medium text-ink">What this does.</span> It handles that
-                  first part. Pick an alert and four AI agents work through it in about ten
-                  seconds &mdash; what broke, which file and function caused it, and a fix based
-                  on how the team solved similar incidents before. It only ever{" "}
-                  <span className="text-ink">suggests</span>; nothing is run against any system.
-                </p>
-              </div>
-            </div>
-
-            <dl className="grid grid-cols-2 gap-x-7 gap-y-3 sm:grid-cols-4">
-              {METRICS.map((m) => (
-                <div key={m.label}>
-                  <dd className="font-mono text-lg font-semibold tabular-nums text-sky-300">
-                    {m.value}
-                  </dd>
-                  <dt className="text-[11px] text-ink-dim">{m.label}</dt>
-                  <dd className="text-[10px] text-ink-faint">{m.note}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </header>
 
       <div className="mx-auto max-w-[88rem] px-5 py-7 sm:px-8">
         {loadError && (
@@ -155,7 +101,12 @@ export default function Dashboard() {
           </aside>
 
           <main className="min-w-0 space-y-6">
-            {!selected && !loadError && <PipelineIntro />}
+            {!selected && !loadError && (
+              <>
+                <PipelineIntro />
+                <Accuracy />
+              </>
+            )}
 
             {selectedAlert && (
               <AlertDetail
@@ -196,22 +147,6 @@ export default function Dashboard() {
           </main>
         </div>
 
-        <footer className="mt-14 border-t border-line pt-6">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
-            How to read the numbers
-          </h2>
-          <p className="mt-2.5 max-w-4xl text-xs leading-relaxed text-ink-faint">
-            Localization is measured against a labelled answer key of 12 scenarios: the agent
-            locates the correct file in 12 of 12, against 10 of 12 for a no-LLM heuristic that
-            takes the traceback nearest the alert. The two it gains are the two with no traceback
-            naming the answer — an unbounded cache found by reading a declared-but-unenforced TTL,
-            and an off-by-one found from <span className="font-mono">received=500 written=499</span>.
-            Retrieval ties a keyword baseline at this corpus size, so the vector store is the right
-            structure rather than a measurable win. Every prompt was tuned against these same 12
-            scenarios with nothing held out, so each figure is a fit to the set rather than a
-            generalisation estimate.
-          </p>
-        </footer>
       </div>
     </div>
   );
