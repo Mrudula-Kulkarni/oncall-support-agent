@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { PipelineAnimation } from "@/components/PipelineAnimation";
-import { ArrowRight, Card } from "@/components/ui";
+import { ArrowRight } from "@/components/ui";
 
 /**
  * Landing page.
@@ -16,24 +16,24 @@ import { ArrowRight, Card } from "@/components/ui";
  */
 
 const AGENTS = [
-  { n: 1, name: "Triage", line: "How serious, and what kind of failure — from the symptoms alone.", tint: "bg-sky-50 text-sky-700 ring-sky-600/20" },
-  { n: 2, name: "Investigator", line: "Reads the logs, deploys and source to name the file at fault, with a confidence score.", tint: "bg-violet-50 text-violet-700 ring-violet-600/20" },
-  { n: 3, name: "Remediation", line: "Suggests a fix, citing the past incident it learned from.", tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20" },
+  { n: 1, name: "Triage", line: "Works out how serious it is, and what kind of failure it is, from the symptoms alone.", tint: "bg-sky-50 text-sky-700 ring-sky-600/20" },
+  { n: 2, name: "Investigator", line: "Reads the logs, the recent deploys and the source code to name the file at fault, and says how sure it is.", tint: "bg-violet-50 text-violet-700 ring-violet-600/20" },
+  { n: 3, name: "Remediation", line: "Suggests a fix, and cites the past incident it learned from.", tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20" },
   { n: 4, name: "Reporter", line: "Writes the summary an on-call engineer would paste into Slack.", tint: "bg-amber-50 text-amber-700 ring-amber-600/20" },
 ];
 
 /** Three with visibly different shapes — a crash, a slow leak, a bad release. */
 const FEATURED = [
-  { id: "alrt_006", title: "Refunds have stopped processing", service: "payment-service", hint: "every copy of the service is crash-looping" },
-  { id: "alrt_003", title: "Checkout slow, memory filling up", service: "checkout-service", hint: "no error, no stack trace — needs the code read" },
+  { id: "alrt_006", title: "Refunds have stopped processing", service: "payment-service", hint: "every copy of the service is crash looping" },
+  { id: "alrt_003", title: "Checkout slow, memory filling up", service: "checkout-service", hint: "no error and no stack trace, so the code has to be read" },
   { id: "alrt_010", title: "Reservations broken since the last deploy", service: "inventory-service", hint: "started six minutes after a release" },
 ];
 
 const DATA = [
   { value: "5", label: "microservices", note: "checkout, payments, auth, inventory, notifications" },
-  { value: "8", label: "planted bugs", note: "across 12 Python files, two of them deliberately clean" },
+  { value: "8", label: "planted bugs", note: "across 12 Python files, two of which are deliberately clean" },
   { value: "12", label: "alerts", note: "with the logs and deploy history around each" },
-  { value: "18", label: "past incidents", note: "the write-ups Remediation searches" },
+  { value: "18", label: "past incidents", note: "the write ups Remediation searches" },
 ];
 
 export default function Home() {
@@ -57,14 +57,20 @@ export default function Home() {
 
               <p className="mt-5 text-lg leading-relaxed text-ink-2">
                 When a production service breaks, the engineer who gets paged spends the first
-                ten to thirty minutes not fixing anything — just working out{" "}
+                ten to thirty minutes not fixing anything. They are working out{" "}
                 <span className="font-medium text-ink">what broke and where</span>. This does
-                that part in about ten seconds, and tells you how confident it is.
+                that part in about ten seconds, and tells you how sure it is.
               </p>
 
               <div className="mt-8">
-                <p className="text-sm font-medium text-ink-2">Start with one of these</p>
-                <div className="mt-3 space-y-2">
+                <h2 className="text-lg font-semibold tracking-tight text-ink">
+                  Watch it work on something broken
+                </h2>
+                <p className="mt-1 text-sm leading-relaxed text-ink-2">
+                  Twelve incidents across five microservices. Each takes about ten seconds, and
+                  every agent reports back as it finishes rather than all at the end.
+                </p>
+                <div className="mt-4 space-y-2">
                   {FEATURED.map((item) => (
                     <Link
                       key={item.id}
@@ -109,7 +115,7 @@ export default function Home() {
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h2 className="text-xl font-semibold tracking-tight text-ink">The four agents</h2>
             <p className="text-sm text-ink-3">
-              Narrow agents are easier to evaluate and fix than one large prompt.
+              Four small agents are easier to evaluate and fix than one big prompt.
             </p>
           </div>
 
@@ -129,9 +135,9 @@ export default function Home() {
 
           <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
             <span className="font-medium text-ink">If the Investigator is under 50% confident</span>
-            , the run stops and hands the incident to a human instead of suggesting a fix — a
-            confident-sounding suggestion built on weak evidence is worse than none, because it
-            gets acted on.
+            , the run stops and hands the incident to a human instead of suggesting a fix. A
+            suggestion that sounds certain but rests on thin evidence is worse than no
+            suggestion, because people act on it.
           </p>
         </div>
       </section>
@@ -141,11 +147,11 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
           <h2 className="text-xl font-semibold tracking-tight text-ink">Demo data</h2>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-2">
-            Diagnosing an incident needs five things joined together: the alert, the logs around
-            it, the deploy that caused it, the source code, and a write-up of a similar past
-            incident. Real companies keep those in five separate systems and no public dataset
-            joins them — so this runs on a purpose-built set instead, where the correct answer is
-            known before the agent starts.
+            Diagnosing an incident needs five things together: the alert, the logs around it,
+            the deploy that caused it, the source code, and a write up of a similar past
+            incident. Real companies keep those in five separate systems, and no public dataset
+            joins them. So this runs on a purpose built set where the right answer is already
+            known, which is what makes the results worth checking.
           </p>
 
           <dl className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -162,36 +168,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --------------------------------------------------------------- cta */}
-      <section>
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-          <Card>
-            <div className="grid items-center gap-6 p-8 sm:grid-cols-[1.4fr_1fr] sm:p-10">
-              <div>
-                <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-                  Watch it work on something broken
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-ink-2">
-                  Twelve incidents across five microservices. Each takes about ten seconds, and
-                  every agent reports back as it finishes rather than at the end.
-                </p>
-              </div>
-              <Link
-                href="/incidents"
-                className="group inline-flex items-center justify-between gap-4 rounded-xl bg-brand px-5 py-4 text-white transition-colors hover:bg-brand-deep sm:justify-self-end"
-              >
-                <span>
-                  <span className="block text-base font-semibold">Go to incidents</span>
-                  <span className="block text-sm text-indigo-200">12 across 5 services</span>
-                </span>
-                <span className="transition-transform group-hover:translate-x-0.5">
-                  <ArrowRight />
-                </span>
-              </Link>
-            </div>
-          </Card>
-        </div>
-      </section>
     </div>
   );
 }

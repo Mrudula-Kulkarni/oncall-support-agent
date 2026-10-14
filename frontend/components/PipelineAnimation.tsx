@@ -64,7 +64,7 @@ export function PipelineAnimation() {
           />
         </svg>
         <p className="text-[13px] leading-snug text-emerald-900">
-          <span className="font-semibold">payment_processor.py</span> — a missing check on
+          <span className="font-semibold">payment_processor.py</span>. A missing check on
           guest checkouts, introduced two days ago.
         </p>
       </div>

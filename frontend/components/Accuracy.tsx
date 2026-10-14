@@ -14,14 +14,14 @@ const RESULTS = [
     value: "12 of 12",
     headline: "Named the exact file causing the bug",
     detail:
-      "Twelve test incidents were written with a known answer — a specific file and function was broken on purpose. The agent named the right one every time.",
+      "Twelve test incidents were written with a known answer. A specific file and function was broken on purpose, and the agent named the right one every time.",
     tone: "text-emerald-700",
   },
   {
     value: "2 more",
     headline: "Than searching the error message alone",
     detail:
-      "Most alerts quote a line of code in the error, so a plain text search finds the file in 10 of the 12 without any AI at all. The two it cannot find are the ones where the error names nothing — those need reading the code, and the agent got both.",
+      "Most alerts quote a line of code in the error, so a plain text search finds the file in 10 of the 12 without any AI at all. The two it cannot find are the ones where the error names nothing. Those need the code read, and the agent got both.",
     tone: "text-brand",
   },
   {
@@ -39,7 +39,7 @@ export function Accuracy() {
       <SectionLabel>How well does it actually work?</SectionLabel>
       <Card className="p-5">
         <p className="text-sm leading-relaxed text-ink-2">
-          The twelve alerts on the left are not random samples — each was written around a bug
+          The twelve alerts on the left are not random samples. Each was written around a bug
           deliberately planted in the sample codebase, so the correct answer is known in advance.
           That is what makes these numbers checkable rather than impressive-sounding.
         </p>
@@ -60,7 +60,7 @@ export function Accuracy() {
 
         <p className="mt-5 border-t border-line pt-4 text-sm leading-relaxed text-ink-3">
           <span className="text-ink-2">The honest caveat:</span> the agents were tuned against
-          these same twelve incidents, so this shows they handle these well — not that they would
+          these same twelve incidents, so this shows they handle these well, not that they would
           handle a thirteenth. A separate set the agents have never seen would be needed to claim
           that, and has not been built yet.
         </p>

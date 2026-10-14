@@ -137,7 +137,7 @@ export function ReasoningTrail({
                   <span className="text-sm text-ink-3">{step.blurb}</span>
                   {state === "skipped" && (
                     <span className="rounded bg-amber-50 px-1.5 py-0.5 text-sm font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
-                      skipped — handed to a human
+                      skipped, handed to a human
                     </span>
                   )}
                 </div>

@@ -94,7 +94,7 @@ export function ConfidenceMeter({ value }: { value: number }) {
         {value.toFixed(2)}
       </span>
       <span className="text-[13px] text-ink-3">
-        {weak ? "below the 0.50 cut-off — handing to a human" : "confident enough to suggest a fix"}
+        {weak ? "below the 0.50 cut off, so this goes to a human" : "sure enough to suggest a fix"}
       </span>
     </div>
   );

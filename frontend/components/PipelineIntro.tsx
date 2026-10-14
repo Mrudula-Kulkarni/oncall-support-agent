@@ -23,7 +23,7 @@ export function PipelineIntro() {
       <h2 className="text-lg font-semibold text-ink">Pick an alert on the left</h2>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">
         Four agents work through it in turn. Each reports back as it finishes, so you watch the
-        reasoning rather than a spinner — the whole thing takes roughly ten to forty seconds.
+        reasoning rather than a spinner. The whole thing takes roughly ten to forty seconds.
       </p>
 
       <ol className="mt-6 grid gap-3 sm:grid-cols-2">

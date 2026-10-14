@@ -71,7 +71,7 @@ export function AlertDetail({
               <div className="mt-2.5 flex flex-wrap items-center gap-2">
                 <SeverityBadge severity={triage.severity} />
                 <CategoryBadge category={triage.category} />
-                <span className="text-sm text-ink-3">— decided by Triage</span>
+                <span className="text-sm text-ink-3">decided by Triage</span>
               </div>
             )}
           </div>

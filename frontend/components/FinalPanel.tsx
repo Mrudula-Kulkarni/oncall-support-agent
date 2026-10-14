@@ -47,7 +47,7 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
                 <span className="font-mono">
                   {investigation?.confidence.toFixed(2) ?? "—"}
                 </span>
-                 confident — below the 0.50 cut-off — so no fix was suggested. A suggestion built on a
+                 sure, which is below the 0.50 cut off, so no fix was suggested. A suggestion built on a
                 hypothesis the pipeline does not believe would read as authoritative without
                 being reliable.
               </p>
@@ -77,7 +77,7 @@ export function FinalPanel({ result }: { result: PipelineResult }) {
         <section>
           <SectionLabel
             right={
-              <span className="text-sm text-ink-3">a suggestion — nothing is run</span>
+              <span className="text-sm text-ink-3">a suggestion, nothing is run</span>
             }
           >
             Suggested fix
