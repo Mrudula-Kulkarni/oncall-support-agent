@@ -22,12 +22,6 @@ const AGENTS = [
   { n: 4, name: "Reporter", line: "Writes the summary an on-call engineer would paste into Slack.", tint: "bg-amber-50 text-amber-700 ring-amber-600/20" },
 ];
 
-/** Three with visibly different shapes — a crash, a slow leak, a bad release. */
-const FEATURED = [
-  { id: "alrt_006", title: "Refunds have stopped processing", service: "payment-service", hint: "every copy of the service is crash looping" },
-  { id: "alrt_003", title: "Checkout slow, memory filling up", service: "checkout-service", hint: "no error and no stack trace, so the code has to be read" },
-  { id: "alrt_010", title: "Reservations broken since the last deploy", service: "inventory-service", hint: "started six minutes after a release" },
-];
 
 const DATA = [
   { value: "5", label: "microservices", note: "checkout, payments, auth, inventory, notifications" },
@@ -62,39 +56,21 @@ export default function Home() {
                 that part in about ten seconds, and tells you how sure it is.
               </p>
 
-              <div className="mt-8">
-                <h2 className="text-lg font-semibold tracking-tight text-ink">
+              <div className="mt-10">
+                <h2 className="text-xl font-semibold tracking-tight text-ink">
                   Watch it work on something broken
                 </h2>
-                <p className="mt-1 text-sm leading-relaxed text-ink-2">
-                  Twelve incidents across five microservices. Each takes about ten seconds, and
-                  every agent reports back as it finishes rather than all at the end.
-                </p>
-                <div className="mt-4 space-y-2">
-                  {FEATURED.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={`/incidents?alert=${item.id}`}
-                      className="group flex items-center gap-4 rounded-xl border border-line bg-surface p-4 transition-all hover:border-brand hover:shadow-[0_1px_2px_rgba(79,70,229,0.08),0_8px_24px_-16px_rgba(79,70,229,0.4)]"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-ink">{item.title}</p>
-                        <p className="mt-0.5 text-sm text-ink-3">
-                          <span className="font-mono">{item.service}</span> · {item.hint}
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-ink-3 transition-all group-hover:translate-x-0.5 group-hover:text-brand">
-                        <ArrowRight />
-                      </span>
-                    </Link>
-                  ))}
-                </div>
                 <Link
                   href="/incidents"
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-brand transition-colors hover:text-brand-deep"
+                  className="group mt-4 inline-flex items-center justify-between gap-6 rounded-xl bg-brand px-6 py-4 text-white transition-colors hover:bg-brand-deep"
                 >
-                  Or browse all twelve
-                  <ArrowRight />
+                  <span>
+                    <span className="block text-base font-semibold">Go to incidents</span>
+                    <span className="block text-sm text-indigo-200">12 across 5 services</span>
+                  </span>
+                  <span className="transition-transform group-hover:translate-x-0.5">
+                    <ArrowRight />
+                  </span>
                 </Link>
               </div>
             </div>
