@@ -22,8 +22,7 @@ export function PipelineIntro() {
     <Card className="p-6">
       <h2 className="text-lg font-semibold text-ink">Pick an alert on the left</h2>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-2">
-        Four agents run in sequence, and each result appears as it finishes rather than all at
-        the end. The whole thing takes roughly ten to forty seconds.
+        Four agents run one after another, and each result appears as it finishes.
       </p>
 
       <ol className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -43,7 +42,7 @@ export function PipelineIntro() {
       </ol>
 
       <p className="mt-6 border-t border-line pt-4 text-sm text-ink-3">
-        If the agents are less than 50% confident, the incident goes to a human instead.{" "}
+        Under 50% confidence, it goes to a human instead.{" "}
         <Link href="/" className="font-medium text-brand hover:text-brand-deep">
           More on how it works →
         </Link>
