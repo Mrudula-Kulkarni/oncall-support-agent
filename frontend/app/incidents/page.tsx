@@ -6,7 +6,7 @@ import { AlertDetail } from "@/components/AlertDetail";
 import { FinalPanel } from "@/components/FinalPanel";
 import { Nav } from "@/components/Nav";
 import { ReasoningTrail } from "@/components/ReasoningTrail";
-import { IncidentGrid } from "@/components/IncidentGrid";
+import { IncidentTable } from "@/components/IncidentTable";
 import { ScenarioPicker } from "@/components/ScenarioPicker";
 import { ArrowRight, Card } from "@/components/ui";
 import { API_URL, fetchScenarios, streamRun } from "@/lib/api";
@@ -111,7 +111,7 @@ function Dashboard() {
         )}
 
         {!selected && !loadError && (
-          <IncidentGrid scenarios={scenarios} onSelect={select} />
+          <IncidentTable scenarios={scenarios} onSelect={select} />
         )}
 
         {selected && (
