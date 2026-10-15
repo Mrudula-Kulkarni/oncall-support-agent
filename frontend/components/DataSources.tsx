@@ -12,31 +12,11 @@
  */
 
 const SOURCES = [
-  {
-    label: "The alert",
-    detail: "What fired: the service, what tripped, and the metric values behind it.",
-    real: "Datadog, PagerDuty",
-  },
-  {
-    label: "Logs",
-    detail: "Log lines from around the time it broke, stack traces included, mixed in with everything else the service was doing.",
-    real: "Splunk, Loki",
-  },
-  {
-    label: "Deploys",
-    detail: "Recent releases and the files each one changed. The one that caused it is not always the latest.",
-    real: "ArgoCD, GitHub",
-  },
-  {
-    label: "Source code",
-    detail: "The service's own code, so a suspected cause can be checked by reading it rather than guessed from a stack trace.",
-    real: "the monorepo",
-  },
-  {
-    label: "Past incidents",
-    detail: "Write ups from similar failures, naming the cause and the change that fixed it.",
-    real: "Confluence, Notion",
-  },
+  { label: "The alert", detail: "What fired, and the numbers behind it.", real: "Datadog, PagerDuty" },
+  { label: "Logs", detail: "The lines the service wrote as it broke.", real: "Splunk, Loki" },
+  { label: "Deploys", detail: "Recent releases, and the files each changed.", real: "ArgoCD, GitHub" },
+  { label: "Source code", detail: "The service's own code, to check a hunch against.", real: "the monorepo" },
+  { label: "Past incidents", detail: "Similar failures, and what fixed them.", real: "Confluence, Notion" },
 ];
 
 export function DataSources() {
@@ -63,11 +43,9 @@ export function DataSources() {
       </ul>
 
       <p className="border-t border-line bg-canvas px-5 py-4 text-sm leading-relaxed text-ink-2">
-        At a real company these sit in five separate systems and nothing joins them up, so no
-        public dataset has all five for one incident.{" "}
-        <span className="font-medium text-ink">This one does</span>, and since every bug in it was
-        planted deliberately, the right answer is known before any agent runs. That is what makes
-        the accuracy figures checkable rather than claimed.
+        At a real company these sit in five different systems, so no public dataset has all five
+        for one incident. <span className="font-medium text-ink">This one does</span>, and every
+        bug in it was planted deliberately, so the right answer is known before any agent runs.
       </p>
     </div>
   );

@@ -89,9 +89,8 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
           <h2 className="text-xl font-semibold tracking-tight text-ink">Demo data</h2>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-2">
-            Diagnosing one incident needs five kinds of data, all about that same incident and
-            that same time window. Pulling them together by hand, across five tools, is what the
-            first ten minutes of a page actually goes on.
+            Diagnosing one incident needs five kinds of data, all about that same incident.
+            Pulling them together by hand is what the first ten minutes of a page goes on.
           </p>
 
           <div className="mt-6">
