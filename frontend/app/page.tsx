@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Accuracy } from "@/components/Accuracy";
 import { Nav } from "@/components/Nav";
 import { DataSources } from "@/components/DataSources";
 import { Pipeline } from "@/components/Pipeline";
@@ -133,6 +134,10 @@ export default function Home() {
             grows forever without clearing, and a loop that quietly skips one row in every batch.
             Those two are where the agent has to read the code to work it out.
           </p>
+
+          <div className="mt-10">
+            <Accuracy />
+          </div>
         </div>
       </section>
     </div>

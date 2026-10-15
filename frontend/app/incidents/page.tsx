@@ -2,7 +2,6 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { Accuracy } from "@/components/Accuracy";
 import { AlertDetail } from "@/components/AlertDetail";
 import { FinalPanel } from "@/components/FinalPanel";
 import { Nav } from "@/components/Nav";
@@ -111,10 +110,7 @@ function Dashboard() {
 
           <main className="min-w-0 space-y-6">
             {!selected && !loadError && (
-              <>
-                <PipelineIntro />
-                <Accuracy />
-              </>
+              <PipelineIntro />
             )}
 
             {selectedAlert && (

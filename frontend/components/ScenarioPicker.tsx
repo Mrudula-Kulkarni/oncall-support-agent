@@ -55,9 +55,6 @@ export function ScenarioPicker({
         Incidents
       </SectionLabel>
 
-      <p className="mb-5 text-sm leading-relaxed text-ink-3">
-        Grouped by the service that raised the alert.
-      </p>
 
       <div className="space-y-6">
         {grouped.map(({ service, alerts }) => (
