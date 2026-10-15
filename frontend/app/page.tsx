@@ -16,22 +16,22 @@ const DATA = [
   {
     value: "5",
     label: "microservices",
-    note: "Checkout, payments, auth, inventory and notifications, wired together as a small e-commerce stack. Each keeps its own logs and release history, so an alert belongs to one service the way it would in production.",
+    note: "Checkout, payments, auth, inventory and notifications, each with its own logs and release history.",
   },
   {
     value: "12",
     label: "Python files",
-    note: "Eight carry a bug planted on purpose: a missing null check, a cache that never clears, an off-by-one, a dropped retry, a race condition, a renamed API field, a bad database timeout, an unhandled error in a worker. Two are clean, so finding the right file is a real choice rather than the only option.",
+    note: "Eight have a bug planted on purpose. Two are clean, so the agent has to pick the right one.",
   },
   {
     value: "12",
     label: "alerts",
-    note: "Each with the log window and deploy history around it. Four of the bugs get a second alert at a different volume, so severity has something to vary across and the same fault has to be recognised twice.",
+    note: "Each comes with the logs and releases around it. Four bugs show up twice, at different severities.",
   },
   {
     value: "18",
     label: "past incidents",
-    note: "The write ups Remediation searches. Eight describe a failure matching a planted bug; the other ten share a service or a symptom but not the cause, so retrieval has to tell a real match from a plausible one.",
+    note: "Eight match a planted bug. The other ten are near misses, so the search has to tell them apart.",
   },
 ];
 
