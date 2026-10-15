@@ -13,10 +13,26 @@ import { ArrowRight } from "@/components/ui";
  */
 
 const DATA = [
-  { value: "5", label: "microservices", note: "checkout, payments, auth, inventory, notifications" },
-  { value: "12", label: "Python files", note: "two with no planted bug, so finding the right one is a real choice" },
-  { value: "12", label: "alerts", note: "each with its log window and deploy history" },
-  { value: "18", label: "past incidents", note: "the write ups Remediation searches" },
+  {
+    value: "5",
+    label: "microservices",
+    note: "Checkout, payments, auth, inventory and notifications, wired together as a small e-commerce stack. Each keeps its own logs and release history, so an alert belongs to one service the way it would in production.",
+  },
+  {
+    value: "12",
+    label: "Python files",
+    note: "Eight carry a bug planted on purpose: a missing null check, a cache that never clears, an off-by-one, a dropped retry, a race condition, a renamed API field, a bad database timeout, an unhandled error in a worker. Two are clean, so finding the right file is a real choice rather than the only option.",
+  },
+  {
+    value: "12",
+    label: "alerts",
+    note: "Each with the log window and deploy history around it. Four of the bugs get a second alert at a different volume, so severity has something to vary across and the same fault has to be recognised twice.",
+  },
+  {
+    value: "18",
+    label: "past incidents",
+    note: "The write ups Remediation searches. Eight describe a failure matching a planted bug; the other ten share a service or a symptom but not the cause, so retrieval has to tell a real match from a plausible one.",
+  },
 ];
 
 export default function Home() {
@@ -97,14 +113,16 @@ export default function Home() {
             <DataSources />
           </div>
 
-          <dl className="mt-7 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="mt-7 grid gap-x-10 gap-y-7 sm:grid-cols-2">
             {DATA.map((d) => (
               <div key={d.label}>
-                <dt className="font-mono text-2xl font-semibold tabular-nums text-brand">
-                  {d.value}
+                <dt className="flex items-baseline gap-2">
+                  <span className="font-mono text-2xl font-semibold tabular-nums text-brand">
+                    {d.value}
+                  </span>
+                  <span className="text-sm font-medium text-ink">{d.label}</span>
                 </dt>
-                <dd className="mt-0.5 text-sm font-medium text-ink">{d.label}</dd>
-                <dd className="mt-0.5 text-sm leading-relaxed text-ink-3">{d.note}</dd>
+                <dd className="mt-1.5 text-sm leading-relaxed text-ink-2">{d.note}</dd>
               </div>
             ))}
           </dl>
