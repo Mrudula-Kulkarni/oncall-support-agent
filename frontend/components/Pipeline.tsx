@@ -10,10 +10,10 @@
  */
 
 const STAGES = [
-  { n: 1, name: "Triage", line: "How serious, and what kind of failure", cls: "stage-1", tint: "bg-sky-50 text-sky-700 ring-sky-600/20" },
-  { n: 2, name: "Investigator", line: "Finds the file at fault, and how sure it is", cls: "stage-2", tint: "bg-violet-50 text-violet-700 ring-violet-600/20" },
-  { n: 3, name: "Remediation", line: "Suggests a fix from a similar past incident", cls: "stage-3", tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20" },
-  { n: 4, name: "Reporter", line: "Writes the summary for the team", cls: "stage-4", tint: "bg-amber-50 text-amber-700 ring-amber-600/20" },
+  { n: 1, name: "Triage", line: "Sets the severity, and what kind of failure it is", cls: "stage-1", tint: "bg-sky-50 text-sky-700 ring-sky-600/20" },
+  { n: 2, name: "Investigator", line: "Reads the logs and recent releases, then names the file at fault and how sure it is", cls: "stage-2", tint: "bg-violet-50 text-violet-700 ring-violet-600/20" },
+  { n: 3, name: "Remediation", line: "Finds a similar past incident, and suggests a fix based on what resolved it", cls: "stage-3", tint: "bg-emerald-50 text-emerald-700 ring-emerald-600/20" },
+  { n: 4, name: "Reporter", line: "Writes the summary the team would read in Slack", cls: "stage-4", tint: "bg-amber-50 text-amber-700 ring-amber-600/20" },
 ];
 
 export function Pipeline() {
@@ -52,8 +52,8 @@ export function Pipeline() {
             {/* the branch, drawn where it happens */}
             {index === 1 && (
               <p className="my-2.5 ml-[17px] border-l border-dashed border-amber-400 py-0.5 pl-6 text-sm leading-snug text-ink-3">
-                <span className="font-medium text-amber-700">Under 0.50 confidence</span>, it goes to
-                a human instead.
+                <span className="font-medium text-amber-700">Under 0.50 confidence</span> it stops
+                here and goes to a human, rather than guessing at a fix.
               </p>
             )}
             {index !== 1 && index < STAGES.length - 1 && (

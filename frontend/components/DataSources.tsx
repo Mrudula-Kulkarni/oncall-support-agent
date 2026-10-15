@@ -12,11 +12,31 @@
  */
 
 const SOURCES = [
-  { label: "The alert", detail: "What fired, and the numbers behind it.", real: "Datadog, PagerDuty" },
-  { label: "Logs", detail: "The lines the service wrote as it broke.", real: "Splunk, Loki" },
-  { label: "Deploys", detail: "Recent releases, and the files each changed.", real: "ArgoCD, GitHub" },
-  { label: "Source code", detail: "The service's own code, to check a hunch against.", real: "the monorepo" },
-  { label: "Past incidents", detail: "Similar failures, and what fixed them.", real: "Confluence, Notion" },
+  {
+    label: "The alert",
+    detail: "The warning itself: which service, and the numbers that set it off.",
+    real: "Datadog, PagerDuty",
+  },
+  {
+    label: "Logs",
+    detail: "What the service logged as it broke, error traces included.",
+    real: "Splunk, Loki",
+  },
+  {
+    label: "Deploys",
+    detail: "Recent releases, and which files each one changed.",
+    real: "ArgoCD, GitHub",
+  },
+  {
+    label: "Source code",
+    detail: "The service's own code, so a suspected cause can be checked rather than guessed.",
+    real: "the monorepo",
+  },
+  {
+    label: "Past incidents",
+    detail: "Write ups of similar failures, and the change that fixed each one.",
+    real: "Confluence, Notion",
+  },
 ];
 
 export function DataSources() {
