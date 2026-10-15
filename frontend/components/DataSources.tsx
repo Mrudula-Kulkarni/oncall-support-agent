@@ -14,27 +14,27 @@
 const SOURCES = [
   {
     label: "The alert",
-    detail: "The warning itself: which service, and the numbers that set it off.",
+    detail: "The warning itself: which service, and the numbers that set it off, like the share of requests failing. Triage reads it to decide how serious the problem is and what kind of failure it looks like.",
     real: "Datadog, PagerDuty",
   },
   {
     label: "Logs",
-    detail: "What the service logged as it broke, error traces included.",
+    detail: "What the service logged in the minutes before and after it broke, including any error messages. These usually point at where the failure started, and sometimes name the file directly.",
     real: "Splunk, Loki",
   },
   {
     label: "Deploys",
-    detail: "Recent releases, and which files each one changed.",
+    detail: "The service's recent releases, when each went out, and which files it changed. A failure that starts right after a release often points to something that release touched.",
     real: "ArgoCD, GitHub",
   },
   {
     label: "Source code",
-    detail: "The service's own code, so a suspected cause can be checked rather than guessed.",
+    detail: "The service's own code. The Investigator searches it to confirm the file and function it suspects really exist, so the answer is checked rather than guessed.",
     real: "the monorepo",
   },
   {
     label: "Past incidents",
-    detail: "Write ups of similar failures, and the change that fixed each one.",
+    detail: "Write ups of earlier failures, what caused each one, and the change that fixed it. Remediation searches them for a close match and bases its suggested fix on what worked before.",
     real: "Confluence, Notion",
   },
 ];
