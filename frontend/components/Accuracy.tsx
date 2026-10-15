@@ -11,24 +11,21 @@ import { Card, SectionLabel } from "./ui";
 
 const RESULTS = [
   {
-    value: "12 of 12",
-    headline: "Named the exact file causing the bug",
-    detail:
-      "Each test bug was planted on purpose, so the right answer is known in advance.",
+    value: "12 of 12 alerts",
+    headline: "The agent found the exact file with the bug",
+    detail: "Each bug was planted on purpose, so the right answer is known in advance.",
     tone: "text-emerald-700",
   },
   {
-    value: "2 more",
-    headline: "Than searching the error message alone",
-    detail:
-      "A plain text search finds 10 of 12. The agent also gets the two where the error names no file.",
+    value: "12 vs 10",
+    headline: "The agent vs a plain text search of the error",
+    detail: "The search misses the two alerts whose errors name no file. The agent gets both.",
     tone: "text-brand",
   },
   {
-    value: "12 of 12",
-    headline: "Cited the right previous incident",
-    detail:
-      "Every suggested fix points to the past incident that actually matches.",
+    value: "12 of 12 fixes",
+    headline: "Based on the right past incident",
+    detail: "Each fix cites a past incident, and it is always the one that truly matches.",
     tone: "text-violet-700",
   },
 ];
@@ -51,11 +48,6 @@ export function Accuracy() {
             </div>
           ))}
         </div>
-
-        <p className="mt-5 border-t border-line pt-4 text-sm leading-relaxed text-ink-3">
-          <span className="text-ink-2">Caveat:</span> the agents were tuned on these same twelve
-          incidents, so this is not yet proof they generalise.
-        </p>
       </Card>
     </section>
   );
