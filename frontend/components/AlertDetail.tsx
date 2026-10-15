@@ -2,7 +2,7 @@
 
 import { readableMetrics } from "@/lib/metrics";
 import type { Alert, TriageOutput } from "@/lib/types";
-import { Card, CategoryBadge, SectionLabel, SeverityBadge } from "./ui";
+import { Card, CategoryBadge, SeverityBadge } from "./ui";
 
 /**
  * Shown as soon as an alert is picked, before anything runs.
@@ -25,7 +25,7 @@ function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
       <dt className="text-sm uppercase tracking-wider text-ink-3">{label}</dt>
-      <dd className="mt-0.5 truncate text-sm text-ink-2">{value}</dd>
+      <dd className="mt-0.5 break-words text-sm text-ink-2">{value}</dd>
     </div>
   );
 }
@@ -59,8 +59,6 @@ export function AlertDetail({
 
   return (
     <section>
-      <SectionLabel>The alert</SectionLabel>
-
       <Card className="p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
@@ -153,13 +151,6 @@ export function AlertDetail({
           </p>
         </details>
 
-        {!hasRun && !running && (
-          <p className="mt-4 text-sm leading-relaxed text-ink-3">
-            The agents pull the service&rsquo;s logs and release history, search its code, and
-            come back with the file at fault, how confident they are, and a fix based on a
-            similar past incident. It takes about ten seconds.
-          </p>
-        )}
       </Card>
     </section>
   );

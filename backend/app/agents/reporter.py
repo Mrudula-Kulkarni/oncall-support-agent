@@ -27,12 +27,12 @@ Write markdown, under 150 words, in this shape:
 
 **<one-line headline: service, what is failing, severity>**
 
-*What we know* — the observed symptoms, drawn from the alert and triage.
-*Where it originates* — the suspected file and function, with the evidence. OMIT THIS SECTION \
+*What we know:* the observed symptoms, drawn from the alert and triage.
+*Where it originates:* the suspected file and function, with the evidence. OMIT THIS SECTION \
 ENTIRELY if no investigation was provided.
-*Suggested fix* — the proposal and the past incidents it draws on. OMIT ENTIRELY if no \
+*Suggested fix:* the proposal and the past incidents it draws on. OMIT ENTIRELY if no \
 remediation was provided.
-*Status* — what happens next, and explicitly what is not yet known.
+*Status:* what happens next, and explicitly what is not yet known.
 
 Rules that matter more than style:
 - Report ONLY what the input below states. You are summarising a pipeline run, not narrating \
@@ -49,9 +49,10 @@ root cause has not been identified and automated investigation has not run yet.
   - REMEDIATION present -> write *Suggested fix*. Marked (not available) -> omit it, and if an \
 investigation exists, Status says no fix has been proposed yet.
 - Say a run was escalated to a human ONLY when the input contains an ESCALATED line. Absence \
-of that line means it was not escalated — do not mention escalation at all.
+of that line means it was not escalated, so do not mention escalation at all.
 - Do not restate the raw alert payload or repeat metric numbers the reader can see. Add the \
 interpretation, not the transcript.
+- Never use em-dashes (—); use a colon, comma or full stop instead.
 - No preamble, no sign-off, no fenced code block. Start with the headline."""
 
 

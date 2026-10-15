@@ -1,7 +1,6 @@
 "use client";
 
 import type { Alert } from "@/lib/types";
-import { SectionLabel } from "./ui";
 
 /**
  * Twelve preset alerts, per spec §7 — no free-text input, which keeps a public demo reliable
@@ -47,43 +46,45 @@ export function ScenarioPicker({
 
   return (
     <div>
-      <SectionLabel
-        right={
-          <span className="font-mono text-sm text-ink-3">{scenarios.length} alerts</span>
-        }
-      >
-        Incidents
-      </SectionLabel>
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <h1 className="text-lg font-semibold tracking-tight text-ink">Incidents</h1>
+        <span className="text-sm text-ink-3">{scenarios.length} alerts</span>
+      </div>
 
-
-      <div className="space-y-6">
+      <div className="space-y-4">
         {grouped.map(({ service, alerts }) => (
-          <div key={service}>
-            <h3 className="font-mono text-sm font-semibold text-ink">{service}</h3>
-            <p className="mb-2 mt-0.5 text-sm text-ink-3">{SERVICE_BLURB[service] ?? ""}</p>
+          <div key={service} className="overflow-hidden rounded-xl border border-line bg-surface">
+            <div className="border-b border-line bg-surface-2 px-3.5 py-2">
+              <h3 className="font-mono text-[13px] font-semibold text-ink">{service}</h3>
+              <p className="text-[13px] text-ink-3">{SERVICE_BLURB[service] ?? ""}</p>
+            </div>
 
-            <div className="space-y-1.5">
+            <ul className="divide-y divide-line">
               {alerts.map((alert) => {
                 const isSelected = alert.alert_id === selected;
                 return (
-                  <button
-                    key={alert.alert_id}
-                    onClick={() => onSelect(alert.alert_id)}
-                    disabled={running}
-                    aria-current={isSelected}
-                    className={`w-full rounded-lg border p-3 text-left text-sm font-medium leading-snug transition-all duration-150
-                      ${
-                        isSelected
-                          ? "border-brand bg-brand text-white"
-                          : "border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink"
-                      }
-                      disabled:cursor-not-allowed disabled:opacity-40`}
-                  >
-                    {alert.title ?? alert.message}
-                  </button>
+                  <li key={alert.alert_id}>
+                    <button
+                      onClick={() => onSelect(alert.alert_id)}
+                      disabled={running}
+                      aria-current={isSelected}
+                      className={`relative w-full px-3.5 py-2.5 text-left text-sm leading-snug transition-colors
+                        ${
+                          isSelected
+                            ? "bg-brand-soft font-medium text-brand-deep"
+                            : "text-ink-2 hover:bg-canvas hover:text-ink"
+                        }
+                        disabled:cursor-not-allowed disabled:opacity-50`}
+                    >
+                      {isSelected && (
+                        <span className="absolute inset-y-0 left-0 w-0.5 bg-brand" />
+                      )}
+                      {alert.title ?? alert.message}
+                    </button>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         ))}
       </div>

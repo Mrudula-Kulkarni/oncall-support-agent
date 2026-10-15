@@ -91,15 +91,15 @@ function Dashboard() {
       <Nav />
 
 
-      <div className="mx-auto max-w-[88rem] px-5 py-7 sm:px-8">
+      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
         {loadError && (
           <Card tone="warn" className="mb-6 p-4">
             <p className="text-sm text-red-700">{loadError}</p>
           </Card>
         )}
 
-        <div className="grid gap-7 lg:grid-cols-[21rem_1fr]">
-          <aside className="lg:sticky lg:top-7 lg:max-h-[calc(100vh-3.5rem)] lg:self-start lg:overflow-y-auto lg:pr-1">
+        <div className="grid gap-7 lg:grid-cols-[19rem_1fr]">
+          <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto lg:pr-1">
             <ScenarioPicker
               scenarios={scenarios}
               selected={selected}
