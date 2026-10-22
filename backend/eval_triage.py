@@ -2,7 +2,7 @@
 
 Category is gradeable because `labeled_test_set.json` names the expected one for every
 scenario. The agent never sees it: `triage.VISIBLE_FIELDS` withholds `alert.type`, which
-holds the same value — see DAY2_PLAN.md.
+holds the same value.
 
 Severity is NOT graded, because no ground truth for it exists. Day 1 left severity out of the
 alerts on purpose (deciding it is Triage's job), so this prints the distribution for a human

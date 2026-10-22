@@ -14,7 +14,7 @@ model choosing badly rather than the search hiding the answer.
 `reasoning_effort` is "medium" here. Triage and Reporter classify and summarise, which "low"
 handles; this agent has to hold a symptom, a mechanism and several files at once, and it is the
 one place in the pipeline where deliberation is worth the latency. That latency is real — around
-27s per call against ~1s for the other two — and DAY3_PLAN.md records the options for cutting it.
+27s per call against ~1s for the other two.
 Lower it via the argument rather than editing this call, so the eval can measure the trade.
 """
 

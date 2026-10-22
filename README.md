@@ -1,206 +1,144 @@
 # On-Call Support Agent
 
-A multi-agent incident-response system. Given a production alert, a pipeline of four agents
-returns, in plain English: **what broke, where in the code it likely originates, and a
-suggested fix grounded in similar past incidents.**
+When a production service breaks, the engineer who gets paged spends the first ten to thirty
+minutes just gathering context: finding the right logs, working out which release caused it,
+and searching code they may not have written. This project hands that part to four AI agents.
 
-The system only ever *suggests* — it never executes a remediation.
+Given an alert, they return **what broke, where in the code it originates, and a suggested fix
+grounded in a similar past incident**, in about ten seconds. The system only ever suggests. It
+never runs anything against any system.
 
 ## How it works
 
 ```
 Alert
   ↓
-[1] Triage         classify severity + category                (single LLM call, no tools)
+[1] Triage         severity + failure category                  (one LLM call)
   ↓
-[2] Investigator   fetch logs + deploys, search the repo,      (tools + direct file search)
-  ↓                produce a hypothesis + confidence score
-  ├── confidence below threshold → escalate to a human, skip remediation
-  └── confidence acceptable ↓
-[3] Remediation    RAG over past incidents → grounded fix      (retrieval + LLM)
-  ↓
-[4] Reporter       plain-English incident summary              (single LLM call)
+[2] Investigator   reads logs and recent deploys, searches      (tools + repo search)
+  ↓                the code, names a file, function, confidence
+  ├── confidence below 0.50 → stop and escalate to a human
+  └── otherwise ↓
+[3] Remediation    retrieves similar past incidents,            (RAG + LLM)
+  ↓                proposes a fix that cites one
+[4] Reporter       the summary the team would read in Slack     (one LLM call)
 ```
 
-Everything the agents see is controlled sample data: the alerts, logs, deploy history, the
-past-incident corpus, and the "production" codebase being investigated. No real
-infrastructure is involved, which is what makes the demo reliable and free to run.
+The website streams each agent's result as it finishes, so you watch the diagnosis build up
+rather than waiting for the end.
 
-## Layout
+## Results
+
+All data is synthetic and authored, including eight bugs planted on purpose in a sample
+codebase. That means every alert has a known right answer, so the agents can be scored rather
+than eyeballed. Every agent result is reported next to a **no-LLM baseline**, because a number
+with nothing to compare against says little.
+
+| Metric | Agent | No-LLM baseline | Difference |
+|---|---|---|---|
+| Found the right file | 12/12 | 10/12 | **+2** |
+| Found the right file and function | 12/12 | 10/12 | **+2** |
+| Triage category | 12/12 | n/a | |
+| Retrieval, right incident in top 3 | 12/12 | 11/12 | +1 |
+| Retrieval, right incident ranked first | 7/12 | 8/12 | −1 |
+| Fix cites a retrieved incident | 12/12 | n/a | |
+| Citation precision | 12/12 | 12/36 if it cited everything | |
+
+**The +2 is the result that matters.** Ten of the twelve alerts include a stack trace naming the
+failing file, so a plain "take the nearest traceback" heuristic (`backend/baseline.py`) already
+gets 10/12 with no AI at all. The two it misses are the ones with no trace: a cache that grows
+forever, found by reading a TTL that is declared but never enforced, and an off-by-one found from
+`received=500 written=499`. The agent gets both.
+
+**Retrieval is honestly a tie.** On an 18-document corpus written in the alerts' own vocabulary,
+embeddings beat a forty-line keyword matcher at top 3 and lose at top 1 (`backend/baseline_retrieval.py`).
+The vector store is the right structure as a corpus grows; here it does not earn a win.
+
+**Caveat.** Every prompt was tuned against these same 12 scenarios with nothing held out, so
+each 12/12 is a fit to this set, not a generalisation estimate. The defensible claim is "located
+the correct file in 12 of 12 labelled scenarios, +2 over a no-LLM baseline", not "100% accurate".
+
+## Design decisions
+
+- **Four narrow agents, not one big prompt.** Each can be evaluated and fixed on its own, and the
+  split mirrors how incident response is actually divided.
+- **A confidence branch.** Below 0.50 the run stops and goes to a human, rather than producing a
+  confident-sounding fix from weak evidence. Escalation is a normal outcome, not an error.
+- **Grounding is enforced in code, not just asked for.** A fix may only cite incidents retrieval
+  actually returned, and the Investigator's file and function are checked against the real
+  source, so neither can be invented.
+- **Triage never sees the answer.** Each alert's `type` field equals the expected category, so it
+  is withheld from the prompt; otherwise the eval would be scoring a copy.
+- **An MCP server for shared lookups.** Logs, deploys and runbooks sit behind a custom MCP server
+  (`fetch_logs`, `get_recent_deploys`, `get_runbook`) that any MCP client can call. Code search
+  stays a direct function, since a protocol layer adds nothing there.
+- **LangGraph for streaming.** The branch alone would not justify a framework; per-agent
+  streaming to the website is what it buys.
+- **Preset scenarios, no free-text input.** Keeps a public demo reliable and its cost bounded.
+
+## Tech stack
+
+| Layer | Tools |
+|---|---|
+| Agents | LangGraph, langchain-groq (`openai/gpt-oss-120b` on Groq's free API) |
+| Retrieval | ChromaDB with local all-MiniLM-L6-v2 embeddings, so no embedding API |
+| Backend | FastAPI, Pydantic, server-sent events |
+| Tools | Custom MCP server (`mcp` 2.x, stdio) |
+| Frontend | Next.js 16, React 19, Tailwind CSS 4, built as a static site |
+| Hosting | Render: Python web service + static site |
+
+## Repo layout
 
 | Path | What it is |
 |---|---|
-| `backend/app/models.py` | Structured I/O contract for every agent |
-| `backend/app/main.py` | FastAPI entrypoint (`/health`, `/scenarios`, `/run`, `/run/stream`, CORS) |
 | `backend/app/graph.py` | The four agents as a LangGraph, with the confidence branch and streaming |
-| `backend/app/rag.py` | Chroma index over the past-incident corpus |
-| `backend/app/tools.py` | The shared tool interface — in-process, or over MCP with `USE_MCP_TOOLS=1` |
-| `backend/mcp_server/` | MCP server exposing `fetch_logs`, `get_recent_deploys`, `get_runbook` |
-| `backend/app/agents/` | One module per agent (Triage, Investigator, Remediation, Reporter) |
-| `backend/app/repo_search.py` | Deterministic candidate ranking over `sample_repo/` — no LLM |
-| `backend/app/pipeline.py` | Runs the stages that exist and times the run |
-| `backend/app/llm.py` | Groq client — model and sampling in one place |
-| `backend/app/data_access.py` | All fixture reads (moves behind MCP on Day 5) |
-| `backend/data/alerts/` | 12 alert scenarios |
-| `backend/data/logs/` | Per-service log snippets, including the bug-revealing traces |
-| `backend/data/deploys/` | Per-service deploy history |
-| `backend/data/incidents/` | 18 past-incident write-ups (the RAG corpus) |
-| `backend/data/runbooks/` | 5 runbooks, keyed by alert category |
-| `backend/data/eval/` | Labeled ground truth for measuring localization accuracy |
-| `sample_repo/` | The "production" codebase the agents investigate — contains 8 planted bugs |
-| `frontend/` | Next.js dashboard — scenario picker, live reasoning trail, final panel |
+| `backend/app/agents/` | One module per agent |
+| `backend/app/models.py` | Typed input and output contract for every agent |
+| `backend/app/main.py` | FastAPI: `/health`, `/scenarios`, `/run`, `/run/stream` |
+| `backend/app/rag.py` | Chroma index over the past incidents |
+| `backend/app/repo_search.py` | Deterministic ranking of candidate files, no LLM |
+| `backend/app/tools.py` | Tool interface: in-process, or over MCP with `USE_MCP_TOOLS=1` |
+| `backend/mcp_server/` | The MCP server |
+| `backend/data/` | 12 alerts, logs, deploy history, 18 past incidents, 5 runbooks, eval labels |
+| `sample_repo/` | The codebase being investigated: 5 services, 8 planted bugs, plus clean decoys |
+| `frontend/` | The website: overview, incident list, live agent trail, final report |
 
-`sample_repo/` is deliberately *not* the application code. It is the target of
-investigation: five services with eight planted bugs, plus clean decoy files so locating the
-right one is a real task rather than a single-candidate guess.
+`sample_repo/` is deliberately not the application. It is what the agents investigate.
 
-## Running the backend
+## Running locally
 
-Requires Python 3.13 (3.14 has no wheels for parts of this stack yet — see `.python-version`).
+**Backend** (Python 3.13):
 
 ```bash
 cd backend
 python3.13 -m venv .venv
 ./.venv/bin/python -m pip install -r requirements.txt
-./.venv/bin/python -m uvicorn app.main:app --reload
-curl localhost:8000/health
+cp ../.env.example ../.env        # then set GROQ_API_KEY
+./.venv/bin/python -m uvicorn app.main:app --reload --port 8000
 ```
 
-Copy `.env.example` to `.env` and set `GROQ_API_KEY` before the agent phases. All agents run
-on Groq's free API, so a public demo costs nothing per click.
-
-## Measuring it honestly
-
-Because the alert→bug mapping is authored, `backend/data/eval/labeled_test_set.json` is a real
-answer key: 12 scenarios across 8 distinct bugs and 5 services. That supports one defensible
-metric — **root-cause localization accuracy**, reported as a fraction of those 12 scenarios —
-plus countable facts (4 agents, 18 past incidents, 5 runbooks) and measured end-to-end latency.
-
-It does not support comparative claims like "reduced MTTR by X%". There is no baseline here to
-compare against, so no such number is reported.
-
-There *is* a baseline for localization, and it is not zero. `backend/baseline.py` measures what
-a no-LLM heuristic scores by taking the traceback nearest in time to the alert: **10/12**. Most
-production alerts carry a stack trace naming the failing file, so the honest way to report the
-Investigator is as a delta on that 83% floor. The two scenarios the heuristic misses are the
-only ones whose logs never name the answer, and they are where the agent has to actually
-reason.
-
-## Design decisions worth knowing
-
-- **Four narrow agents rather than one large prompt.** Single-purpose agents are easier to
-  evaluate and fix in isolation, and the split mirrors how incident response is actually
-  divided.
-- **A confidence branch, not blind continuation.** Low confidence escalates to a human instead
-  of generating a confident-sounding fix from weak evidence.
-- **Tool access for logs/deploys/runbooks, direct search for code.** Shared operational
-  lookups sit behind a reusable tool interface; locating a file is a plain repo search, where a
-  protocol layer would add a dependency without adding capability.
-- **Retrieval for remediation.** Suggested fixes are grounded in what resolved similar
-  incidents before rather than invented.
-- **Preset scenarios, no free-text input.** Keeps a public demo reliable and its cost bounded.
-
-## Status
-
-**Phase 1** — scaffold, models, and all synthetic data, ground truth cross-checked against the
-source files it points to. See `DAY1_PLAN.md`.
-
-**Phase 2** — Triage and Reporter agents, and a working `alert → triage → reporter` path behind
-`POST /run`. See `DAY2_PLAN.md`. Triage matches the authored category on all 12 scenarios, but
-its prompt was tuned against those same 12 with nothing held out, so that is a fit to the set
-rather than a measure of generalisation — `DAY2_PLAN.md` records what each revision fixed.
-
-**Phase 3** — the Investigator, plus the confidence branch that escalates to a human below 0.5.
-See `DAY3_PLAN.md`. This is the phase that produces the §8 metric:
-
-| Measure | Value |
-|---|---|
-| Localization — file | 12/12 |
-| Localization — file + function | 11/12 |
-| No-LLM floor (`baseline.py`) | 10/12 |
-| **Delta vs floor** | **+2, and both are the scenarios no heuristic can reach** |
-
-The delta is the honest figure, and its shape matters more than its size. Most production alerts
-carry a stack trace naming the failing file, so the two scenarios worth pointing at are the ones
-where no trace exists: an unbounded cache found by reading a declared-but-unenforced TTL, and an
-off-by-one found from `received=500 written=499`. As with triage, the prompt was iterated against
-these 12 with nothing held out, so 12/12 is a fit to the set, not an accuracy claim.
-
-**Phase 4** — Remediation with RAG over the past incidents, and LangGraph orchestration. See
-`DAY4_PLAN.md`. All four agents now run end to end, and `POST /run/stream` emits one server-sent
-event per agent as it finishes.
-
-Retrieval is where this phase got interesting, and the honest answer is a tie:
-
-| Method | recall@1 | recall@3 |
-|---|---|---|
-| Keyword overlap, no embeddings, no model | 8/12 | 11/12 |
-| **Chroma (all-MiniLM-L6-v2)** | 7/12 | **12/12** |
-
-Chroma is worse at rank 1 and better at rank 3 — net +1 at the k the agent retrieves. The corpus
-is 18 documents and the mirroring incidents were authored in the alerts' own vocabulary, so there
-is no vocabulary gap for embeddings to bridge. The vector store is the right structure as a corpus
-grows; on this one it ties a forty-line keyword matcher, and `DAY4_PLAN.md` says so rather than
-reporting 12/12 as a win.
-
-Grounding is enforced in code: `referenced_incidents` is filtered to ids retrieval actually
-returned, so a fix cannot cite an incident the model invented or recalled from pretraining.
-
-**The dashboard** (spec §7) is built: the 12 presets from `GET /scenarios`, a reasoning trail
-that fills in agent by agent off `POST /run/stream`, and a final panel with the located file, the
-suggested fix and the incidents it cited. Escalation renders as a first-class outcome rather than
-an error, because that is what it is. See `frontend/README.md`.
-
-Grounding is the one measure here that is not saturated by a trivial baseline:
-
-| Measure | Value |
-|---|---|
-| Fix grounded in a retrieved incident | 12/12 |
-| Cited the expected mirror | 12/12 |
-| Citation precision | 12/12 |
-
-Retrieval hands the agent three candidates and it cited exactly the right one every time, never
-padding — "cite everything retrieved" would score 12/36. Retrieval on this corpus is easy;
-choosing and using the right precedent is where the agent adds something.
-
-**Phase 5** — the custom MCP server (spec §6). Three tools over the synthetic data, runnable
-standalone over stdio so any MCP client can call them:
+**Frontend** (in a second terminal):
 
 ```bash
-cd backend && ./.venv/bin/python -m mcp_server.server
+cd frontend
+npm install
+npm run dev                       # http://localhost:3000
 ```
 
-Logs, deploys and runbooks go behind it because they are lookups several agents share. Code
-lookup deliberately does not: a repo search gains nothing from a protocol layer, so
-`repo_search.py` stays direct. The pipeline calls these in-process by default and over MCP with
-`USE_MCP_TOOLS=1` — both paths verified to return identical data. Putting a subprocess handshake
-on every request to read local JSON would buy latency and a failure mode for nothing, and spec §6
-explicitly allows the direct path.
-
-See `DAY5_PLAN.md`. Deployment config is in `render.yaml` and `DEPLOY.md`; the deploy itself needs
-a Render account.
-
-## Every measured result
-
-| Metric | Agent | No-LLM floor | Delta |
-|---|---|---|---|
-| Localization — file | 12/12 | 10/12 | **+2** |
-| Localization — file + function | 12/12 | 10/12 | **+2** |
-| Triage category | 12/12 | — | — |
-| Retrieval recall@3 | 12/12 | 11/12 | +1 |
-| Retrieval recall@1 | 7/12 | 8/12 | −1 |
-| Fix grounded in a retrieved incident | 12/12 | — | — |
-| Citation precision | 12/12 | 12/36 if citing all | — |
-
-Every prompt was iterated against these same 12 scenarios with nothing held out, so each 12/12 is
-a fit to the set rather than a generalisation estimate. The defensible phrasing is "located the
-correct file in 12 of 12 labelled scenarios, +2 over a no-LLM baseline" — not "100% accurate".
-
-Running the two phases that exist:
+**Checks and evals:**
 
 ```bash
 cd backend
-./verify_day1.sh                 # every mechanical check, exits non-zero on failure
-./.venv/bin/python eval_triage.py   # triage category accuracy over the 12 scenarios
-./.venv/bin/python baseline.py      # the 83% no-LLM floor the Investigator must beat
+./verify_day1.sh                       # data and wiring checks, exits non-zero on failure
+./.venv/bin/python eval_triage.py      # triage category accuracy
+./.venv/bin/python baseline.py         # the no-LLM localization baseline
+./.venv/bin/python -m mcp_server.server   # run the MCP server on its own, over stdio
 ```
+
+## Deploying
+
+Both halves deploy to Render from `render.yaml`: the backend as a Python web service and the
+frontend as a free static site. Step-by-step instructions are in [`DEPLOY.md`](DEPLOY.md).
+
+On the free plan the backend sleeps when idle, so the first request after a quiet spell takes
+30 to 60 seconds. Groq's free tier allows roughly two full runs per minute.

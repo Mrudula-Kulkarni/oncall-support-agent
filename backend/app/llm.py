@@ -14,7 +14,7 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
-# Spec §3 names Llama 3.3 70B, which Groq has since removed — see DAY2_PLAN.md. Any chat
+# Spec §3 names Llama 3.3 70B, which Groq has since removed (model_not_found). Any chat
 # model on the account works; override with GROQ_MODEL rather than editing this.
 DEFAULT_MODEL = "openai/gpt-oss-120b"
 

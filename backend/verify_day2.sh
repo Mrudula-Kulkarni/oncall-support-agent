@@ -7,7 +7,7 @@
 # checks are free and should stay runnable on every edit.
 #
 # Exits non-zero if anything fails. What it cannot check is whether the summaries are any
-# GOOD — see "by judgment" in DAY2_PLAN.md.
+# GOOD.
 
 set -uo pipefail
 cd "$(dirname "$0")"

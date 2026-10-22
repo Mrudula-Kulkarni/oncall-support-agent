@@ -4,7 +4,7 @@
 #     ./verify_day1.sh
 #
 # Exits non-zero if anything fails. What it cannot check is whether the data is
-# any *good* — see "by judgment" in DAY1_PLAN.md.
+# any *good*.
 
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -71,6 +71,6 @@ $PY baseline.py | sed 's/^/  /'
 
 if (( fails )); then printf '\n\033[31m%d check(s) failed\033[0m\n' "$fails"; exit 1; fi
 printf '\n\033[32mall mechanical checks passed\033[0m\n'
-printf 'Still needs your judgment — see DAY1_PLAN.md:\n'
+printf 'Still needs your judgment:\n'
 printf '  python3.13 show_scenario.py alrt_003     # no traceback; solvable by inference?\n'
 printf '  python3.13 show_scenario.py alrt_009     # same — add --answer only after you commit\n'

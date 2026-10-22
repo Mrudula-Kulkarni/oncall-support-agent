@@ -87,7 +87,7 @@ def main():
 
     # Log fixtures must read oldest-first. Authored out of order, a later unrelated
     # incident's stack traces land ahead of the evidence for the alert under investigation,
-    # which points a reader at the wrong file. See DAY2_PLAN.md.
+    # which points a reader at the wrong file.
     for path in sorted((DATA / "logs").glob("*.json")):
         stamps = [e["timestamp"] for e in json.loads(path.read_text())]
         if stamps != sorted(stamps):
