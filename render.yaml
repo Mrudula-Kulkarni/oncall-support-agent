@@ -3,9 +3,9 @@
 # Two things about the free tier that matter here:
 #
 # 1. Chroma downloads all-MiniLM-L6-v2 (~79MB) on first use and builds the index from
-#    data/incidents/. The disk is ephemeral, so that happens again after every cold start.
-#    `preDeployCommand` warms it at deploy time so the first user request is not the one that
-#    pays for it.
+#    data/incidents/. The disk is ephemeral, so that happens again after every cold start, and
+#    the first run after one is slower. (A preDeployCommand could warm it, but Render only
+#    allows those on paid plans.)
 # 2. Free instances sleep after inactivity and cold-start slowly. A demo link that has been idle
 #    will take ~30s to answer its first request before any agent has run.
 services:
@@ -16,7 +16,6 @@ services:
     region: oregon
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    preDeployCommand: python -c "from app.rag import search; search('warm the index', k=1)"
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
