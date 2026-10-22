@@ -1,4 +1,4 @@
-# Render blueprint for the backend (spec §9.8). The frontend goes to Vercel separately.
+# Render blueprint for both halves: the FastAPI backend and the Next.js frontend.
 #
 # Two things about the free tier that matter here:
 #
@@ -27,3 +27,15 @@ services:
         value: openai/gpt-oss-120b
       - key: CORS_ALLOWED_ORIGINS
         sync: false          # the Vercel URL, once it exists
+
+  # The frontend, as a static site: Next builds it to plain files in out/ (output: "export"),
+  # which Render serves free from its CDN. Static sites never sleep; only the API above does.
+  - type: web
+    name: oncall-support-agent
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: out
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false          # the API's URL above; baked in at build time

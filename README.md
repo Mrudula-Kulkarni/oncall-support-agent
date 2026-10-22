@@ -178,7 +178,7 @@ on every request to read local JSON would buy latency and a failure mode for not
 explicitly allows the direct path.
 
 See `DAY5_PLAN.md`. Deployment config is in `render.yaml` and `DEPLOY.md`; the deploy itself needs
-your Render and Vercel accounts.
+a Render account.
 
 ## Every measured result
 

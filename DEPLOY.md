@@ -1,79 +1,68 @@
 # Deploying
 
-Backend to Render, frontend to Vercel, per spec §9.8. The two live on different domains, which
-is why CORS is configured explicitly rather than left open.
+Both halves go to Render, from the one blueprint in `render.yaml`:
 
-Both steps need accounts and cannot be scripted from here — they are the one part of this
-project that is not reproducible from the repo alone.
+| Service | What it is | Free plan |
+|---|---|---|
+| `oncall-support-agent-api` | the FastAPI backend | sleeps after ~15 minutes idle |
+| `oncall-support-agent` | the Next.js frontend, built to static files | never sleeps |
 
-## 1. Backend (Render)
+They live on different domains, which is why CORS is configured explicitly rather than left open.
 
-`render.yaml` is a blueprint: point Render at this repo and it reads the service definition.
+## 1. Create both services
 
-Set two environment variables in the dashboard, both marked `sync: false` so they are never
-committed:
+1. Sign in to [render.com](https://render.com) with GitHub.
+2. **New → Blueprint**, pick this repo. Render reads `render.yaml` and lists both services.
+3. It asks for the variables marked `sync: false`:
 
-| Variable | Value |
-|---|---|
-| `GROQ_API_KEY` | your key |
-| `CORS_ALLOWED_ORIGINS` | the Vercel URL, once step 2 gives you one |
+| Variable | Service | Value |
+|---|---|---|
+| `GROQ_API_KEY` | api | your Groq key |
+| `CORS_ALLOWED_ORIGINS` | api | leave blank for now |
+| `NEXT_PUBLIC_API_URL` | frontend | `https://oncall-support-agent-api.onrender.com` |
 
-Chicken-and-egg: you do not have the Vercel URL yet. Deploy the backend first, deploy the
-frontend, then come back and set `CORS_ALLOWED_ORIGINS`. Until you do, the dashboard will load
-and then fail every request with a CORS error in the browser console — which looks like a bug
-and is not one.
+The API URL is predictable from the service name. If Render had to change the name because it
+was taken, the real URL is on the api service's page; fix the variable and redeploy the frontend.
 
-Verify:
+4. **Apply.** The backend takes 5 to 10 minutes to build.
+
+## 2. Connect them
+
+Copy the frontend's URL (likely `https://oncall-support-agent.onrender.com`), then on the api
+service: **Environment → `CORS_ALLOWED_ORIGINS`** = that URL, no trailing slash. Save; Render
+restarts the backend.
+
+Until this is set, the site loads and every request fails with a CORS error in the browser
+console. That looks like a bug and is not one.
+
+`NEXT_PUBLIC_API_URL` is baked into the frontend at build time. Changing it later needs a
+redeploy of the frontend (**Manual Deploy → Deploy latest commit**), not just an edit.
+
+## 3. Verify
 
 ```bash
-curl https://<your-render-url>/health
-curl -s -D - -o /dev/null -H "Origin: https://<your-vercel-url>" \
-     https://<your-render-url>/scenarios | grep -i access-control-allow-origin
+API=https://oncall-support-agent-api.onrender.com
+SITE=https://oncall-support-agent.onrender.com
+
+curl $API/health
+curl -s $API/scenarios | python3 -c "import json,sys; print(len(json.load(sys.stdin)), 'scenarios')"
+curl -s -D - -o /dev/null -H "Origin: $SITE" $API/scenarios | grep -i access-control-allow-origin
 ```
 
-The second must echo your Vercel origin. If it prints nothing, `CORS_ALLOWED_ORIGINS` is wrong.
+The last one must echo the site's URL. If it prints nothing, `CORS_ALLOWED_ORIGINS` is wrong.
+Then open the site and run one alert end to end.
 
-## 2. Frontend (Vercel)
+## What to expect on the free plan
 
-Import the repo and set **Root Directory** to `frontend` — without that, Vercel builds from the
-repo root and finds no Next.js app.
-
-| Variable | Value |
-|---|---|
-| `NEXT_PUBLIC_API_URL` | your Render URL, no trailing slash |
-
-It must be `NEXT_PUBLIC_`-prefixed: the dashboard calls the API from the browser, so the value is
-baked into the client bundle at build time. Changing it later requires a redeploy, not just an
-environment edit.
-
-## What to expect on free tiers
-
-**Cold starts.** A Render free instance sleeps after inactivity. The first request to a link
-that has been idle takes roughly 30 seconds before any agent runs. For a demo you are sending to
+**Cold starts.** The backend sleeps after inactivity, and the first request after that takes
+30 to 60 seconds, plus a little more while the search index rebuilds. Before sending the link to
 someone, open it yourself first.
 
 **Rate limits.** Groq's free tier allows 8000 tokens per minute, and one Investigator call can
-request ~3400. That is roughly two full runs per minute before a 429. The dashboard surfaces the
-upstream message rather than hanging, but do not click three scenarios in a row while someone is
-watching.
+request ~3400. That is roughly two full runs per minute before a 429.
 
-**Memory.** Chroma plus onnxruntime is the heaviest thing in the image. If the free instance
-runs out of memory, the lever is `rag.py` — the corpus is 18 documents and `baseline_retrieval.py`
-shows keyword matching scores within one scenario of the embeddings at recall@3, so dropping to
-the keyword path costs almost nothing measurable on this data.
+**Memory.** Chroma plus onnxruntime is the heaviest thing in the image, against a 512MB limit.
+If it runs out, the lever is `rag.py`: `baseline_retrieval.py` shows keyword matching scores
+within one scenario of the embeddings at recall@3, so dropping to it costs almost nothing here.
 
-## Verifying the deployment
-
-```bash
-# backend alive
-curl https://<render-url>/health
-
-# scenarios load
-curl -s https://<render-url>/scenarios | python3 -c "import json,sys; print(len(json.load(sys.stdin)), 'scenarios')"
-
-# a full run, streamed
-curl -sN -X POST https://<render-url>/run/stream \
-  -H 'Content-Type: application/json' -d '{"alert_id":"alrt_009"}' | head -20
-```
-
-Then open the Vercel URL and run one scenario end to end.
+**Redeploys.** Every push to `main` redeploys both services.

@@ -1,6 +1,6 @@
 # Dashboard
 
-Next.js dashboard for the On-Call Support Agent (spec §7). Deployed target is Vercel; it talks
+Next.js dashboard for the On-Call Support Agent (spec §7). Deployed as a Render static site; it talks
 to the FastAPI backend over REST and server-sent events.
 
 ## Running it
@@ -45,6 +45,7 @@ rather than hanging.
 
 ## Deploying
 
-Set `NEXT_PUBLIC_API_URL` to the Render backend URL in Vercel's environment settings, and add the
-Vercel origin to `CORS_ALLOWED_ORIGINS` in the backend environment — the two run on different
-domains, which is why CORS is configured explicitly (spec §7).
+`next.config.ts` sets `output: "export"`, so `npm run build` writes plain files to `out/`, which
+Render serves as a static site. Set `NEXT_PUBLIC_API_URL` to the backend's Render URL, and add
+this site's URL to `CORS_ALLOWED_ORIGINS` on the backend: the two run on different domains,
+which is why CORS is configured explicitly (spec §7). See `../DEPLOY.md`.

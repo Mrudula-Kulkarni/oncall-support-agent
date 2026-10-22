@@ -1,8 +1,9 @@
 import type { Alert, StepEvent } from "./types";
 
 /**
- * The FastAPI backend. Set NEXT_PUBLIC_API_URL for deployment — the backend is on Render and
- * this is on Vercel, which is why CORS is configured explicitly server-side (spec §7).
+ * The FastAPI backend. Set NEXT_PUBLIC_API_URL for deployment. The backend and this static site
+ * are separate Render services on different domains, which is why CORS is configured explicitly
+ * server-side (spec §7).
  */
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:8000";
